@@ -331,7 +331,7 @@ const LiveAgent = () => {
 
       <div className={`${styles.messageWrapper}`}>
       <div
-            className={`${styles.botChatMsgContainer} d-flex flex-column flex-lg-row my-2`}
+            className={`${styles.botChatMsgContainer} d-flex flex-column my-2`}
           >
             <div className="d-flex">
               <Image
@@ -340,7 +340,7 @@ const LiveAgent = () => {
                 width="40"
                 height="40"
               /></div>
-            <div className={`d-flex flex-column p-3 p-lg-0  ms-lg-2`}>
+            <div className={`d-flex flex-column py-3`}>
               <div
                 className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
               >
@@ -355,7 +355,7 @@ const LiveAgent = () => {
                 <p className="">வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு, விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்</p>
 
                 <div className="d-flex flex-row welcome-language-select">
-                  <div className="col-4 p-2">
+                  <div className="col-4 p-1">
                     <button className=' px-3 py-2 rounded' onClick={() => {
                       setSelectedLanguage('English');
                       setMessageState((state) => ({
@@ -371,8 +371,8 @@ const LiveAgent = () => {
                       }));
                     }}>English</button>
                   </div>
-                  <div className="col-4 p-2">
-                    <button className='px-3 py-2 rounded' onClick={() => {
+                  <div className="col-4 p-1">
+                    <button className='px-2 py-2 rounded' onClick={() => {
                       setSelectedLanguage('Sinhala');
                       setMessageState((state) => ({
                         ...state,
@@ -388,7 +388,7 @@ const LiveAgent = () => {
                     }}>Sinhala</button>
                   </div>
 
-                  <div className="col-4 p-2">
+                  <div className="col-4 p-1">
                     <button className='px-3 py-2 rounded' onClick={() => {
                       setSelectedLanguage('Tamil');
                       setMessageState((state) => ({
