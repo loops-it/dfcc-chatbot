@@ -7,7 +7,7 @@ const nextConfig = {
   //   return config;
   // },
   images: {
-    domains: ['localhost']
+    domains: ['localhost','solutions.it-marketing.website']
   },
   async headers() {
     return [
