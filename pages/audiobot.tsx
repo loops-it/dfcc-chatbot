@@ -125,10 +125,11 @@ const AudioBot = () => {
     }
 
     const data = await response.json();
+    console.log("audiobot : ",data)
 
 
     if (data.status === "success") {
-      const question = data.transcript;
+      const question = data;
       if (!question) {
         alert('Racording failed!');
         setLoading(false);

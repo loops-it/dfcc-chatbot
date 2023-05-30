@@ -123,10 +123,11 @@ const Videobot = () => {
     }
 
     const data = await response.json();
-    const question = data.transcript;
+    console.log("videobot : ",data)
+    // const question = data.transcript;
 
     if (data.status === "success") {
-      const question = data.transcript;
+      const question = data;
       if (!question) {
         alert('Racording failed!');
         setLoading(false);
