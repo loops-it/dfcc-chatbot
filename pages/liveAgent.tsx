@@ -88,7 +88,7 @@ const LiveAgent = () => {
           console.log(data.success)
     
           if(data.success === 'success'){
-            setShowChatRating(true)
+            setShowChatRating(false)
           }
           else{
             setShowChatRating(false)
@@ -121,7 +121,7 @@ const LiveAgent = () => {
         console.log('live profile_picture : ', data.profile_picture);
   
         if(data.chat_status === "closed"){
-          setShowChatRating(true);
+          setShowChatRating(false);
         }
         else{
           setShowChatRating(false);
