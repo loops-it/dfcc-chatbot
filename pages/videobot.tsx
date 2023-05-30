@@ -94,22 +94,37 @@ const Videobot = () => {
 
     setError(null);
     setLoading(true);
-    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
+    // const response = await fetch('https://solutions.it-marketing.website/recording-start', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     chatId: id,
+    //     apiType: "video",
+    //   }),
+    // });
+
+    // if (response.status !== 200) {
+    //   const error = await response.json();
+    //   throw new Error(error.message);
+    // }
+    // const data = await response.json();
+    const response = await fetch('/api/speech_recognition', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        chatId: id,
-        apiType: "video",
-      }),
     });
 
     if (response.status !== 200) {
       const error = await response.json();
       throw new Error(error.message);
     }
+
     const data = await response.json();
+    const question = data.transcript;
+
     if (data.status === "success") {
       const question = data.transcript;
       if (!question) {
