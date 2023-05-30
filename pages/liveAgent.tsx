@@ -72,7 +72,7 @@ const LiveAgent = () => {
   const handleCloseChat =async ()=>{
     setCloseState(true)
 
-    const response = await fetch('http://localhost:7000/chat-close-by-user', {
+    const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const LiveAgent = () => {
     if (timerRunning){
       console.log("dasd",id)
       intervalId = setInterval(async () => {
-        const response = await fetch('http://localhost:7000/live-chat-agent', {
+        const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const LiveAgent = () => {
               setAgentImage("/chat-header.png");
             }
             else{
-              setAgentImage("http://localhost:7000/uploads/"+data.profile_picture);
+              setAgentImage("https://solutions.it-marketing.website/uploads/"+data.profile_picture);
             }
             setAgentName(data.agent_name);
             
@@ -209,7 +209,7 @@ const LiveAgent = () => {
 
 
     // send user message
-    const response = await fetch('http://localhost:7000/live-chat-user', {
+    const response = await fetch('https://solutions.it-marketing.website/live-chat-user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ const LiveAgent = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      const response = await fetch('http://localhost:7000/save-rating', {
+      const response = await fetch('https://solutions.it-marketing.website/save-rating', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -63,7 +63,7 @@ const Chatbot = () => {
     if (liveAgent === true) {
       console.log("----------", id)
       const interval = setInterval(async () => {
-        const response = await fetch('http://localhost:7000/live-chat-agent', {
+        const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const Chatbot = () => {
               setAgentImage("/chat-header.png");
             }
             else {
-              setAgentImage("http://localhost:7000/uploads/" + data.profile_picture);
+              setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
             }
             setAgentName(data.agent_name);
 
@@ -169,7 +169,7 @@ const Chatbot = () => {
 
 
       // translate to sinhala
-      const response = await fetch('http://localhost:7000/translate-to-english-api', {
+      const response = await fetch('https://solutions.it-marketing.website/translate-to-english-api', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ const Chatbot = () => {
       pending: undefined,
     }));
     if (liveAgent === true) {
-      const response = await fetch('http://localhost:7000/live-chat-user', {
+      const response = await fetch('https://solutions.it-marketing.website/live-chat-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ const Chatbot = () => {
 
   const SwitchToLiveAgent = async () => {
     console.log('========== Switch to live agent =========')
-    const response = await fetch('http://localhost:7000/switch-to-live-agent', {
+    const response = await fetch('https://solutions.it-marketing.website/switch-to-live-agent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -358,7 +358,7 @@ const Chatbot = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      const response = await fetch('http://localhost:7000/save-rating', {
+      const response = await fetch('https://solutions.it-marketing.website/save-rating', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

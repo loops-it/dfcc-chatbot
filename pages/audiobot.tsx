@@ -95,7 +95,7 @@ const AudioBot = () => {
 
     setError(null);
     setLoading(true);
-    const response = await fetch('http://localhost:7000/recording-start', {
+    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const AudioBot = () => {
       const ctrl = new AbortController();
   
       try {
-        const response = await fetch('http://localhost:7000/audio-chatGpt-response', {
+        const response = await fetch('https://solutions.it-marketing.website/audio-chatGpt-response', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
