@@ -247,7 +247,7 @@ const LiveAgent = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      const response = await fetch('https://solutions.it-marketing.website/save-rating', {
+      const response = await fetch('/api/star_rating', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
