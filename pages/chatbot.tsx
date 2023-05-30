@@ -83,7 +83,7 @@ const Chatbot = () => {
         console.log('live profile_picture : ', data.profile_picture);
 
         if (data.chat_status === "closed") {
-          setShowChatRating(false);
+          setShowChatRating(true);
         }
         else {
           setShowChatRating(false);
@@ -706,7 +706,7 @@ const Chatbot = () => {
                         />
 
                         <button
-                          // onClick={sendRateValues}
+                          onClick={sendRateValues}
                           className="text-white bg-dark p-2 mt-2 rounded"
                         >
                           SEND
