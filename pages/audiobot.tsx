@@ -112,13 +112,14 @@ const AudioBot = () => {
     // }
     // const data = await response.json();
 
-    const response = await fetch('/api/speech_recognition', {
+    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
         body: JSON.stringify({
-        chatId: id
+        chatId: id,
+        apiType: "audio"
       }),
     });
 
