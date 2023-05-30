@@ -10,9 +10,9 @@ export default async function handler(
 //   }
 // https://chat-backend-self.vercel.app/home/recording-start
 // http://localhost:3001/home/recording-start
-const chatId = req.body.chatId || '';
-const rating = req.body.rating || '';
-const inputValue = req.body.inputValue || '';
+const chatid = req.body.chatId || '';
+const ratinga = req.body.rating || '';
+const inputValues = req.body.inputValue || '';
 
 // console.log("chat id : ", id)
 
@@ -23,9 +23,9 @@ const inputValue = req.body.inputValue || '';
         'Content-Type': 'application/json',
       },
         body: JSON.stringify({
-            chatId: chatId,
-            ratingValue: rating,
-            feedbackMessage: inputValue,
+            chatId: chatid,
+            ratingValue: ratinga,
+            feedbackMessage: inputValues,
       }),
     });
 
