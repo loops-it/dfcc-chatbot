@@ -10,7 +10,7 @@ export default async function handler(
 //   }
 // https://chat-backend-self.vercel.app/home/recording-start
 // http://localhost:3001/home/recording-start
-const id = req.body.ids || '';
+const id = req.body.chatId || '';
 
 console.log("chat id : ", id)
 
