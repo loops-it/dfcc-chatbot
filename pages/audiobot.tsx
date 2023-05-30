@@ -117,6 +117,9 @@ const AudioBot = () => {
       headers: {
         'Content-Type': 'application/json',
       },
+        body: JSON.stringify({
+        chatId: id
+      }),
     });
 
     if (response.status !== 200) {

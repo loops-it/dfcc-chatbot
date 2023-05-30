@@ -10,6 +10,7 @@ export default async function handler(
 //   }
 // https://chat-backend-self.vercel.app/home/recording-start
 // http://localhost:3001/home/recording-start
+const id = req.body.ids || '';
 
   try {
     const response = await fetch('https://solutions.it-marketing.website/recording-start', {
@@ -17,6 +18,10 @@ export default async function handler(
       headers: {
         'Content-Type': 'application/json',
       },
+        body: JSON.stringify({
+        chatId: id,
+        apiType: "audio",
+      }),
     });
 
     if (response.status !== 200) {
