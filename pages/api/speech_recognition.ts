@@ -26,7 +26,7 @@ export default async function handler(
 
     const data = await response.json();
     console.log(data)
-    res.status(200).json({ transcript: data.transcript });
+    res.status(200).json({ transcript: data });
   } catch (error) {
     res.status(500).json({ error });
   }
