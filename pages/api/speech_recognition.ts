@@ -12,6 +12,8 @@ export default async function handler(
 // http://localhost:3001/home/recording-start
 const id = req.body.ids || '';
 
+console.log("chat id : ", id)
+
   try {
     const response = await fetch('https://solutions.it-marketing.website/recording-start', {
       method: 'POST',
