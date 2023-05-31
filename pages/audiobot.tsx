@@ -120,7 +120,8 @@ const AudioBot = () => {
         'Content-Type': 'application/json',
       },
         body: JSON.stringify({
-        chatId: id
+        chatId: id,
+        apiType: "audio"
       }),
     });
 
@@ -130,7 +131,7 @@ const AudioBot = () => {
     }
 
     const data = await response.json();
-    console.log("audiobot : ",data)
+    // console.log("audiobot : ",data)
 
       // const response = await axios.post('/api/speech_recognition', {
       //   chatId: id
