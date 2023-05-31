@@ -12,8 +12,10 @@ export default async function handler(
 // https://chat-backend-self.vercel.app/home/recording-start
 // http://localhost:3001/home/recording-start
 const chatid = req.body.chatId || '';
-const ratinga = req.body.rating || '';
-const inputValues = req.body.inputValue || '';
+const rating = req.body.rating || '';
+const inputValue = req.body.inputValue || '';
+
+console.log( chatid, rating, inputValue)
 
 // console.log("chat id : ", id)
 
@@ -38,8 +40,8 @@ const inputValues = req.body.inputValue || '';
     // const data = await response.json();
     const response = await axios.post('https://solutions.it-marketing.website/save-rating', {
       chatId: chatid,
-      ratingValue: ratinga,
-      feedbackMessage: inputValues,
+      ratingValue: rating,
+      feedbackMessage: inputValue,
     }, {
       headers: {
         'Content-Type': 'application/json'
