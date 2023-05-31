@@ -114,38 +114,38 @@ const AudioBot = () => {
     // }
     // const data = await response.json();
 
-    // const response = await fetch('/api/speech_recognition', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //     body: JSON.stringify({
-    //     chatId: id
-    //   }),
-    // });
-
-    // if (response.status !== 200) {
-    //   const error = await response.json();
-    //   throw new Error(error.message);
-    // }
-
-    // const data = await response.json();
-    // console.log("audiobot : ",data)
-
-      const response = await axios.post('/api/speech_recognition', {
+    const response = await fetch('/api/speech_recognition', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+        body: JSON.stringify({
         chatId: id
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      }),
+    });
+
+    if (response.status !== 200) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const data = await response.json();
+    console.log("audiobot : ",data)
+
+      // const response = await axios.post('/api/speech_recognition', {
+      //   chatId: id
+      // }, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // });
     
-      if (response.status !== 200) {
-        throw new Error(response.data.message);
-      }
+      // if (response.status !== 200) {
+      //   throw new Error(response.data.message);
+      // }
     
-      const data = response.data;
-      console.log("audiobot:", data);
+      // const data = response.data;
+      // console.log("audiobot:", data);
 
 
     if (data.status === "success") {

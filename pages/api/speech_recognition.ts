@@ -16,25 +16,25 @@ const id = req.body.chatId || '';
 console.log("chat id : ", id)
 
   try {
-    // const response = await fetch('https://solutions.it-marketing.website/recording-start', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //     body: JSON.stringify({
-    //     chatId: id,
-    //     apiType: "audio",
-    //   }),
-    // });
-
-    const response = await axios.post('https://solutions.it-marketing.website/recording-start', {
+    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+        body: JSON.stringify({
         chatId: id,
-        apiType: "audio"
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+        apiType: "audio",
+      }),
+    });
+
+    // const response = await axios.post('https://solutions.it-marketing.website/recording-start', {
+    //     chatId: id,
+    //     apiType: "audio"
+    //   }, {
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
 
     // if (response.status !== 200) {
     //   const error = await response.json();
