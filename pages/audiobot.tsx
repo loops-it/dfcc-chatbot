@@ -6,6 +6,8 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Image from 'next/image';
 import { BsFillMicMuteFill, BsFillMicFill } from 'react-icons/bs';
 import { Document } from 'langchain/document';
+import axios from 'axios';
+import { data } from 'jquery';
 
 const AudioBot = () => {
   const [query, setQuery] = useState<string>('');
@@ -112,23 +114,39 @@ const AudioBot = () => {
     // }
     // const data = await response.json();
 
-    const response = await fetch('/api/speech_recognition', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        body: JSON.stringify({
-        chatId: id
-      }),
-    });
+    // const response = await fetch('/api/speech_recognition', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //     body: JSON.stringify({
+    //     chatId: id
+    //   }),
+    // });
 
-    if (response.status !== 200) {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+    // if (response.status !== 200) {
+    //   const error = await response.json();
+    //   throw new Error(error.message);
+    // }
 
-    const data = await response.json();
-    console.log("audiobot : ",data)
+    // const data = await response.json();
+    // console.log("audiobot : ",data)
+
+      const response = await axios.post('https://solutions.it-marketing.website/recording-start', {
+        chatId: id,
+        apiType: "audio"
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+    
+      const data = response.data;
+      console.log("audiobot:", data);
 
 
     if (data.status === "success") {
