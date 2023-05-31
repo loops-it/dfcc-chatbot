@@ -132,9 +132,8 @@ const AudioBot = () => {
     // const data = await response.json();
     // console.log("audiobot : ",data)
 
-      const response = await axios.post('https://solutions.it-marketing.website/recording-start', {
-        chatId: id,
-        apiType: "audio"
+      const response = await axios.post('/api/speech_recognition', {
+        chatId: id
       }, {
         headers: {
           'Content-Type': 'application/json'

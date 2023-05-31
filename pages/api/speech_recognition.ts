@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -15,23 +16,38 @@ const id = req.body.chatId || '';
 console.log("chat id : ", id)
 
   try {
-    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        body: JSON.stringify({
+    // const response = await fetch('https://solutions.it-marketing.website/recording-start', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //     body: JSON.stringify({
+    //     chatId: id,
+    //     apiType: "audio",
+    //   }),
+    // });
+
+    const response = await axios.post('https://solutions.it-marketing.website/recording-start', {
         chatId: id,
-        apiType: "audio",
-      }),
-    });
+        apiType: "audio"
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+    // if (response.status !== 200) {
+    //   const error = await response.json();
+    //   throw new Error(error.message);
+    // }
+
+    // const data = await response.json();
 
     if (response.status !== 200) {
-      const error = await response.json();
-      throw new Error(error.message);
+      throw new Error(response.data.message);
     }
-
-    const data = await response.json();
+  
+    const data = response.data;
     console.log(data)
     res.status(200).json({ transcript: data.transcript });
 
