@@ -48,8 +48,10 @@ console.log("apiType : ", apiType)
     // }
   
     // const data = response.data;
+    // console.log(data)
+    // res.status(200).json({ transcript: data.transcript });
     console.log(data)
-    res.status(200).json({ transcript: data.transcript });
+    res.status(200).json({ transcript: data });
 
   } catch (error) {
     res.status(500).json({ error });
