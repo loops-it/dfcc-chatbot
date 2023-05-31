@@ -15,7 +15,7 @@ const chatid = req.body.chatId || '';
 const rating = req.body.rating || '';
 const inputValue = req.body.inputValue || '';
 
-console.log( chatid, rating, inputValue)
+console.log( "get data : ",chatid, rating, inputValue)
 
 // console.log("chat id : ", id)
 
@@ -38,6 +38,7 @@ console.log( chatid, rating, inputValue)
     // }
 
     // const data = await response.json();
+    console.log("data save rating", chatid, rating, inputValue)
     const response = await axios.post('https://solutions.it-marketing.website/save-rating', {
       chatId: chatid,
       ratingValue: rating,
