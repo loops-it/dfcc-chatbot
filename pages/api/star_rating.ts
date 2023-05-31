@@ -52,7 +52,7 @@ const inputValues = req.body.inputValue || '';
   
     const data = response.data;
     console.log(data)
-    res.status(200).json({ transcript: data });
+    res.status(200).json({ success: data });
 
   } catch (error) {
     res.status(500).json({ error });
