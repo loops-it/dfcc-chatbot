@@ -9,7 +9,7 @@ console.log("chat id : ", chatId)
 console.log("apiType : ", apiType)
 
   try {
-    const response = await fetch('https://solutions.it-marketing.website/test-audio', {
+    const response = await fetch('https://solutions.it-marketing.website/recording-start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
