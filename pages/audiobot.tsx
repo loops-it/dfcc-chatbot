@@ -131,7 +131,7 @@ const AudioBot = () => {
     }
 
     const data = await response.json();
-    // console.log("audiobot : ",data)
+    console.log("audiobot : ",data.transcript)
 
       // const response = await axios.post('/api/speech_recognition', {
       //   chatId: id

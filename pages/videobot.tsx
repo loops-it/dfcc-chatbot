@@ -123,7 +123,7 @@ const Videobot = () => {
     // }
 
     // const data = await response.json();
-    // console.log("videobot : ",data)
+    console.log("videobot : ",data.transcript)
     // const question = data.transcript;
 
     if (data.status === "success") {
