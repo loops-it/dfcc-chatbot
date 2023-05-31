@@ -359,35 +359,35 @@ const Chatbot = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      // const response = await fetch('/api/star_rating', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     chatId: id,
-      //     ratingValue: rating,
-      //     feedbackMessage: inputValue,
-      //   }),
-      // });
-      // const ratingData = await response.json();
-
-      const response = await axios.post('/api/star_rating', {
-        chatId: id,
-        ratingValue: rating,
-        feedbackMessage: inputValue,
-      }, {
+      const response = await fetch('/api/star_rating', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        
+        body: JSON.stringify({
+          chatId: id,
+          ratingValue: rating,
+          feedbackMessage: inputValue,
+        }),
       });
+      const ratingData = await response.json();
+
+      // const response = await axios.post('/api/star_rating', {
+      //   chatId: id,
+      //   ratingValue: rating,
+      //   feedbackMessage: inputValue,
+      // }, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+        
+      // });
     
-      if (response.status !== 200) {
-        throw new Error(response.data.message);
-      }
+      // if (response.status !== 200) {
+      //   throw new Error(response.data.message);
+      // }
     
-      const data = response.data;
+      // const data = response.data;
       // console.log(ratingData)
     } catch (error) {
       console.error(error);

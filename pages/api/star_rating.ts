@@ -5,56 +5,58 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-//   if (req.method !== 'POST') {
-//     res.status(405).json({ message: 'Method Not Allowed' });
-//     return;
-//   }
-// https://chat-backend-self.vercel.app/home/recording-start
-// http://localhost:3001/home/recording-start
-const chatid = req.body.chatId || '';
-const rating = req.body.rating || '';
-const inputValue = req.body.inputValue || '';
+  //   if (req.method !== 'POST') {
+  //     res.status(405).json({ message: 'Method Not Allowed' });
+  //     return;
+  //   }
+  // https://chat-backend-self.vercel.app/home/recording-start
+  // http://localhost:3001/home/recording-start
 
-console.log( "get data : ",chatid, rating, inputValue)
 
-// console.log("chat id : ", id)
+  // console.log( "get data : ",chatid, rating, inputValue)
+
+  // console.log("chat id : ", id)
 
   try {
-    // const response = await fetch('https://solutions.it-marketing.website/save-rating', {
-    //   method: 'POST',
+    const chatid = req.body.chatId || '';
+    const rating = req.body.rating || '';
+    const inputValue = req.body.inputValue || '';
+    console.log("data save rating", chatid, rating, inputValue)
+    const response = await fetch('https://solutions.it-marketing.website/save-rating', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chatId: chatid,
+        ratingValue: rating,
+        feedbackMessage: inputValue,
+      }),
+    });
+
+    if (response.status !== 200) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const data = await response.json();
+
+    // const response = await axios.post('https://solutions.it-marketing.website/save-rating', {
+    //   chatId: chatid,
+    //   ratingValue: rating,
+    //   feedbackMessage: inputValue,
+    // }, {
     //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //     body: JSON.stringify({
-    //         chatId: chatid,
-    //         ratingValue: ratinga,
-    //         feedbackMessage: inputValues,
-    //   }),
+    //     'Content-Type': 'application/json'
+    //   }
     // });
 
     // if (response.status !== 200) {
-    //   const error = await response.json();
-    //   throw new Error(error.message);
+    //   throw new Error(response.data.message);
     // }
 
-    // const data = await response.json();
-    console.log("data save rating", chatid, rating, inputValue)
-    const response = await axios.post('https://solutions.it-marketing.website/save-rating', {
-      chatId: chatid,
-      ratingValue: rating,
-      feedbackMessage: inputValue,
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  
-    if (response.status !== 200) {
-      throw new Error(response.data.message);
-    }
-  
-    const data = response.data;
-    console.log(data)
+    // const data = response.data;
+    // console.log(data)
     res.status(200).json({ success: data });
 
   } catch (error) {
