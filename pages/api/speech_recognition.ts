@@ -36,18 +36,18 @@ console.log("chat id : ", id)
     //     }
     //   });
 
-    // if (response.status !== 200) {
-    //   const error = await response.json();
-    //   throw new Error(error.message);
-    // }
-
-    // const data = await response.json();
-
     if (response.status !== 200) {
-      throw new Error(response.data.message);
+      const error = await response.json();
+      throw new Error(error.message);
     }
+
+    const data = await response.json();
+
+    // if (response.status !== 200) {
+    //   throw new Error(response.data.message);
+    // }
   
-    const data = response.data;
+    // const data = response.data;
     console.log(data)
     res.status(200).json({ transcript: data.transcript });
 
