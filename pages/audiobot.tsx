@@ -131,26 +131,12 @@ const AudioBot = () => {
     }
 
     const data = await response.json();
-    console.log("audiobot : ",data.transcript)
-
-      // const response = await axios.post('/api/speech_recognition', {
-      //   chatId: id
-      // }, {
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-    
-      // if (response.status !== 200) {
-      //   throw new Error(response.data.message);
-      // }
-    
-      // const data = response.data;
-      // console.log("audiobot:", data);
+    console.log("audiobot : ",data.transcript.transcript)
 
 
-    if (data.status === "success") {
-      const question = data;
+    if (data.transcript.status === "success") {
+      const question = data.transcript.transcript;
+      console.log("audiobot : ",question)
       if (!question) {
         alert('Racording failed!');
         setLoading(false);
