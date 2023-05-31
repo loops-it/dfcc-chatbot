@@ -247,18 +247,37 @@ const LiveAgent = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      const response = await fetch('/api/star_rating', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chatId: id,
-          ratingValue: rating,
-          feedbackMessage: inputValue,
-        }),
-      });
-      const ratingData = await response.json();
+      // const response = await fetch('/api/star_rating', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     chatId: id,
+      //     ratingValue: rating,
+      //     feedbackMessage: inputValue,
+      //   }),
+      // });
+      // const ratingData = await response.json();
+
+        console.log("chat id : ",id)
+        console.log("rating : ",rating)
+        console.log("feedback : ",inputValue)
+  
+        const response = await fetch('/api/star_rating', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chatId: id,
+            ratingValue: rating,
+            feedbackMessage: inputValue,
+          }),
+        });
+        const ratingData = await response.json();
+        console.log("rating data : ",ratingData)
+
       // console.log(ratingData)
     } catch (error) {
       console.error(error);

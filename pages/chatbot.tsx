@@ -228,7 +228,7 @@ const Chatbot = () => {
       return;
     }
     let question = query.trim();
-    console.log('========== Go to live agent =========')
+    // console.log('========== Go to live agent =========')
     setMessageState((state) => ({
       ...state,
       messages: [
@@ -256,9 +256,9 @@ const Chatbot = () => {
       const data = await response.json();
 
 
-      console.log('live chat agent : ', data.agent_id);
-      console.log('live chat status : ', data.chat_status);
-      console.log('live chat message : ', data.agent_message);
+      // console.log('live chat agent : ', data.agent_id);
+      // console.log('live chat status : ', data.chat_status);
+      // console.log('live chat message : ', data.agent_message);
       setQuery('');
     }
   }
@@ -266,7 +266,7 @@ const Chatbot = () => {
 
 
   const SwitchToLiveAgent = async () => {
-    console.log('========== Switch to live agent =========')
+    // console.log('========== Switch to live agent =========')
     const response = await fetch('https://solutions.it-marketing.website/switch-to-live-agent', {
       method: 'POST',
       headers: {
@@ -280,7 +280,7 @@ const Chatbot = () => {
       throw new Error(error.message);
     }
     const data = await response.json();
-    console.log('if success : ', data.success)
+    // console.log('if success : ', data.success)
     if (data.success === 'Success') {
       setLiveAgent(true);
     }
@@ -298,9 +298,9 @@ const Chatbot = () => {
   const handleEnter = useCallback(
     (e: any) => {
       if (e.key === 'Enter' && query) {
-        if(liveAgent === false){
+        if (liveAgent === false) {
           handleSubmit(e);
-        }else{
+        } else {
           handleLiveAgent(e);
         }
       } else if (e.key == 'Enter') {
@@ -359,6 +359,10 @@ const Chatbot = () => {
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
+      console.log("chat id : ", id)
+      console.log("rating : ", rating)
+      console.log("feedback : ", inputValue)
+
       const response = await fetch('/api/star_rating', {
         method: 'POST',
         headers: {
@@ -371,24 +375,7 @@ const Chatbot = () => {
         }),
       });
       const ratingData = await response.json();
-
-      // const response = await axios.post('/api/star_rating', {
-      //   chatId: id,
-      //   ratingValue: rating,
-      //   feedbackMessage: inputValue,
-      // }, {
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-        
-      // });
-    
-      // if (response.status !== 200) {
-      //   throw new Error(response.data.message);
-      // }
-    
-      // const data = response.data;
-      // console.log(ratingData)
+      console.log("rating data : ", ratingData)
     } catch (error) {
       console.error(error);
     }

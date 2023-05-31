@@ -1,10 +1,14 @@
-import axios from 'axios';
-import { NextApiRequest, NextApiResponse } from 'next';
+/* eslint-disable import/no-anonymous-default-export */
+// import axios from 'axios';
+// import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+// export default async function handler(
+//   req: NextApiRequest,
+//   res: NextApiResponse
+// ) {
+  export default async function (req: { body: {
+    [x: string]: string; chatId: string; rating: string; inputValue: string; 
+}; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { success?: any; error?: unknown; }): void; new(): any; }; }; }){
   //   if (req.method !== 'POST') {
   //     res.status(405).json({ message: 'Method Not Allowed' });
   //     return;
@@ -12,16 +16,17 @@ export default async function handler(
   // https://chat-backend-self.vercel.app/home/recording-start
   // http://localhost:3001/home/recording-start
 
-
-  // console.log( "get data : ",chatid, rating, inputValue)
-
-  // console.log("chat id : ", id)
+  const chatid = req.body.chatId || '';
+  const rating = req.body.ratingValue || '';
+  const inputValue = req.body.feedbackMessage || '';
+  
+  console.log( "get data : ",chatid)
+  console.log( "get data : ",rating)
+  console.log( "get data : ",inputValue)
 
   try {
-    const chatid = req.body.chatId || '';
-    const rating = req.body.rating || '';
-    const inputValue = req.body.inputValue || '';
-    console.log("data save rating", chatid, rating, inputValue)
+    // res.status(200).json({ chatid: chatid, rating: rating, inputValue:inputValue   });
+    console.log("data save rating: ", chatid, rating, inputValue)
     const response = await fetch('https://solutions.it-marketing.website/save-rating', {
       method: 'POST',
       headers: {
