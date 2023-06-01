@@ -52,7 +52,7 @@ const LiveAgent = () => {
   const [timerRunning, setTimerRunning] = useState(false);
   const [closeRating, setCloseRating] = useState(false);
   const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
-
+  const [busyAgent, setBusyAgent] = useState(false);
   const [timerCount, setTimerCount] = useState(0);
 
 
@@ -70,7 +70,7 @@ const LiveAgent = () => {
 
   useEffect(() => {
     // console.log("text there : ", checkNotSure)
-  }, [agentName, agentInfoMsg, agentImage, timerRunning, closeRating]);
+  }, [agentName, agentInfoMsg, agentImage, timerRunning, closeRating, busyAgent]);
 
 
   const [closeState, setCloseState] = useState(false);
@@ -99,11 +99,9 @@ const LiveAgent = () => {
       setShowChatRating(false)
     }
   }
-
+  let counter = 0;
   useEffect(() => {
-    let counter = 0;
-    counter = counter + 1;
-    console.log("counter",counter)
+
     if (closeState === false) {
       let intervalId: any;
       if (timerRunning) {
@@ -156,7 +154,30 @@ const LiveAgent = () => {
                 }));
               }
             }
+            else {
+              
+              if (counter > 6) {
+                const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ chatId: id }),
+                });
 
+                if (response.status !== 200) {
+                  const error = await response.json();
+                  throw new Error(error.message);
+                }
+                const data = await response.json();
+                setBusyAgent(true);
+                setWaitingLiveAgent(false)
+                console.log(data.success)
+                clearInterval(intervalId)
+              }
+              counter = counter + 1;
+              console.log("counter", counter)
+            }
           }
         }, 5000);
 
@@ -167,6 +188,8 @@ const LiveAgent = () => {
     else {
       console.log("chat closed")
     }
+
+    
 
   }, [timerRunning, id, waitingLiveAgent]);
 
@@ -481,6 +504,13 @@ const LiveAgent = () => {
               </>
             );
           })}
+           {
+            busyAgent && (
+              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+                <p className='mb-0'>Sorry, All agents are busy. Please try again later...</p>
+              </div>
+            )
+          }
           {
             waitingLiveAgent && (
               <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
