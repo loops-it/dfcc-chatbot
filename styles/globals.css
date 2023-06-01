@@ -172,17 +172,41 @@ aside.EmojiPickerReact.epr-main{
   width: 280px;
 }
 .close-button{
-  position: absolute;
-    width: 40px;
-    height: 40px;
+  /* position: absolute; */
+    width: 30px;
+    height: 30px;
     text-align: center;
     line-height: 20px;
     font-size: 20px !important;
-    background-color: #FF0000;
+    background-color: transparent;
     color: #fff;
     border-radius: 50% !important;
     right: 25px;
     bottom: 60px;
+}
+.close-button:hover{
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 20px !important;
+    background-color: transparent;
+    color: #FF0000;
+    border-radius: 50% !important;
+    right: 25px;
+    bottom: 60px;
+}
+.bg-chat-close-msg{
+  background-color: #cff2fd;
+  border: solid 1px #a8ebff;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.bg-chat-ratesuccess-msg{
+  background-color: #d0fdcf;
+  border: solid 1px #a8ffac;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 /* @media screen and (max-width: 992px) {
   .welcomeMessageContainer{

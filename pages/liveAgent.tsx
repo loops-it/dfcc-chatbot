@@ -49,6 +49,7 @@ const LiveAgent = () => {
   const [agentInfoMsg, setAgentInfoMsg] = useState(false);
   const [agentImage, setAgentImage] = useState('/chat-header.png');
   const [timerRunning, setTimerRunning] = useState(false);
+  const [closeRating, setCloseRating] = useState(false);
 
 
 
@@ -65,7 +66,7 @@ const LiveAgent = () => {
 
   useEffect(() => {
     // console.log("text there : ", checkNotSure)
-  }, [agentName, agentInfoMsg, agentImage, timerRunning]);
+  }, [agentName, agentInfoMsg, agentImage, timerRunning, closeRating]);
 
 
   const [closeState, setCloseState] = useState(false);
@@ -114,11 +115,6 @@ const LiveAgent = () => {
           throw new Error(error.message);
         }
         const data = await response.json();
-        console.log('live chat agent : ', data.agent_id);
-        console.log('live chat status : ', data.chat_status);
-        console.log('live chat message : ', data.agent_message);
-        console.log('live agent name : ', data.agent_name);
-        console.log('live profile_picture : ', data.profile_picture);
   
         if(data.chat_status === "closed"){
           setShowChatRating(true);
@@ -245,25 +241,7 @@ const LiveAgent = () => {
 
 
   async function sendRateValues() {
-    // const sendData = async (botName, index) => {
     try {
-      // const response = await fetch('/api/star_rating', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     chatId: id,
-      //     ratingValue: rating,
-      //     feedbackMessage: inputValue,
-      //   }),
-      // });
-      // const ratingData = await response.json();
-
-        console.log("chat id : ",id)
-        console.log("rating : ",rating)
-        console.log("feedback : ",inputValue)
-  
         const response = await fetch('/api/star_rating', {
           method: 'POST',
           headers: {
@@ -277,14 +255,10 @@ const LiveAgent = () => {
         });
         const ratingData = await response.json();
         console.log("rating data : ",ratingData)
-
-      // console.log(ratingData)
+        setCloseRating(true)
     } catch (error) {
       console.error(error);
     }
-    // }
-    // console.log(inputValue);
-    // console.log(rating);
   }
 
 
@@ -338,13 +312,14 @@ const LiveAgent = () => {
     <Layout>
       {/* chat top header */}
       <div className={`${styles.chatTopBar} d-flex flex-row`}>
-      <div className="col-12 text-center d-flex flex-row justify-content-between px-2 px-lg-5">
+      <div className="col-12 text-center d-flex flex-row justify-content-between px-2 px-lg-2">
         <Image
                 src="/chat-top-bar.png"
                 alt="AI"
                 width={150}
                 height={30}
               />
+              <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
         </div>
       </div>
 
@@ -371,7 +346,6 @@ const LiveAgent = () => {
                 />
                 <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
                 <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
-                {/* <p className="">வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு, விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்</p> */}
 
                 <div className="d-flex flex-row welcome-language-select">
                   <div className="col-6 p-1">
@@ -406,24 +380,6 @@ const LiveAgent = () => {
                       }));
                     }}>Arabic</button>
                   </div>
-
-                  {/* <div className="col-4 p-1">
-                    <button className='px-3 py-2 rounded' onClick={() => {
-                      setSelectedLanguage('Tamil');
-                      setMessageState((state) => ({
-                        ...state,
-                        messages: [
-                          ...state.messages,
-                          {
-                            type: 'apiMessage',
-                            message: 'Tamil',
-                          },
-                        ],
-                        pending: undefined,
-                      }));
-                    }}>Tamil</button>
-                  </div> */}
-
                 </div>
               </div>
               {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
@@ -502,6 +458,13 @@ const LiveAgent = () => {
               </>
             );
           })}
+          {
+            closeState && (
+              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+                <p className='mb-0'>This chat is closed</p>
+              </div>
+            )
+          }
           {showChatRating && (
             <div className="d-flex flex-column" id='chatRating'>
             <div className="d-flex">
@@ -567,13 +530,20 @@ const LiveAgent = () => {
           </div>
           )
           }
+          {
+            closeRating && (
+              <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
+                <p className='mb-0'>Thank you for your feedback</p>
+              </div>
+            )
+          }
         </div>
       </div>
 
       {/* input fields =================*/}
       <div className={`${styles.inputContainer}`}>
         {/* <form onSubmit={handleSubmit}> */}
-        <button className='close-button' onClick={handleCloseChat}><AiOutlineClose /> </button>
+        {/* <button className='close-button' onClick={handleCloseChat}><AiOutlineClose /> </button> */}
           <textarea
             disabled={loading}
             onKeyDown={handleEnter}

@@ -5,7 +5,7 @@ import { Message } from '@/types/chat';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Image from 'next/image';
 import LoadingDots from '@/components/ui/LoadingDots';
-import { AiOutlineSend } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineSend } from 'react-icons/ai';
 import { Document } from 'langchain/document';
 import axios from 'axios';
 
@@ -39,6 +39,9 @@ const Chatbot = () => {
   const [agentName, setAgentName] = useState('');
   const [agentInfoMsg, setAgentInfoMsg] = useState(false);
   const [agentImage, setAgentImage] = useState('/chat-header.png');
+  const [closeRating, setCloseRating] = useState(false);
+  const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
+  const [imgLiveBot, setImgLiveBot] = useState("bot"); //agent
 
 
   useEffect(() => {
@@ -55,70 +58,99 @@ const Chatbot = () => {
   useEffect(() => {
 
 
-  }, [apiMessageFinal, liveAgent, agentName, agentInfoMsg, agentImage, messages]);
+  }, [apiMessageFinal, liveAgent, agentName, agentInfoMsg, agentImage, imgLiveBot, messages, waitingLiveAgent]);
+
+
+console.log(waitingLiveAgent)
+  
+  const [closeState, setCloseState] = useState(false);
+  const handleCloseChat = async () => {
+    setCloseState(true)
+
+    const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ chatId: id }),
+    });
+
+    if (response.status !== 200) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+    const data = await response.json();
+    console.log(data.success)
+
+    if (data.success === 'success') {
+      setShowChatRating(true)
+    }
+    else {
+      setShowChatRating(false)
+    }
+  }
 
 
 
   useEffect(() => {
+    if (closeState === false) {
+      if (liveAgent === true) {
+        
+        console.log("----------", id)
+        const interval = setInterval(async () => {
+          const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ chatId: id }),
+          });
 
-    if (liveAgent === true) {
-      console.log("----------", id)
-      const interval = setInterval(async () => {
-        const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ chatId: id }),
-        });
-
-        if (response.status !== 200) {
-          const error = await response.json();
-          throw new Error(error.message);
-        }
-        const data = await response.json();
-        console.log('live chat agent : ', data.agent_id);
-        console.log('live chat status : ', data.chat_status);
-        console.log('live chat message : ', data.agent_message);
-        console.log('live agent name : ', data.agent_name);
-        console.log('live profile_picture : ', data.profile_picture);
-
-        if (data.chat_status === "closed") {
-          setShowChatRating(true);
-        }
-        else {
-          setShowChatRating(false);
-          setAgentInfoMsg(false);
-          if (data.agent_id != "unassigned") {
-            if (!data.profile_picture) {
-              setAgentImage("/chat-header.png");
-            }
-            else {
-              setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
-            }
-            setAgentName(data.agent_name);
-
-            setAgentInfoMsg(true);
-            if (data.agent_message != null) {
-              setMessageState((state) => ({
-                ...state,
-                messages: [
-                  ...state.messages,
-                  {
-                    type: 'apiMessage',
-                    message: data.agent_message,
-                  },
-                ],
-                pending: undefined,
-              }));
-            }
+          if (response.status !== 200) {
+            const error = await response.json();
+            throw new Error(error.message);
           }
+          const data = await response.json();
 
-        }
-      }, 5000);
-      return () => clearInterval(interval);
+          if (data.chat_status === "closed") {
+            setShowChatRating(true);
+          }
+          else {
+            setShowChatRating(false);
+            setAgentInfoMsg(false);
+            if (data.agent_id != "unassigned") {
+              if (!data.profile_picture) {
+                setAgentImage("/chat-header.png");
+              }
+              else {
+                setImgLiveBot('agent')
+                setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
+              }
+              setAgentName(data.agent_name);
+              setWaitingLiveAgent(false)
+              setAgentInfoMsg(true);
+              if (data.agent_message != null) {
+                setMessageState((state) => ({
+                  ...state,
+                  messages: [
+                    ...state.messages,
+                    {
+                      type: 'apiMessage',
+                      message: data.agent_message,
+                    },
+                  ],
+                  pending: undefined,
+                }));
+              }
+            }
+
+          }
+        }, 5000);
+        return () => clearInterval(interval);
+      }
     }
-  }, [id, liveAgent]);
+
+  }, [id, liveAgent, waitingLiveAgent]);
 
 
 
@@ -139,7 +171,6 @@ const Chatbot = () => {
   async function handleSubmit(e: any) {
     if (liveAgent === false) {
       e.preventDefault();
-
       setError(null);
 
       if (!query) {
@@ -220,7 +251,6 @@ const Chatbot = () => {
 
   const handleLiveAgent = async (e: any) => {
     e.preventDefault();
-
     setError(null);
 
     if (!query) {
@@ -254,11 +284,6 @@ const Chatbot = () => {
         throw new Error(error.message);
       }
       const data = await response.json();
-
-
-      // console.log('live chat agent : ', data.agent_id);
-      // console.log('live chat status : ', data.chat_status);
-      // console.log('live chat message : ', data.agent_message);
       setQuery('');
     }
   }
@@ -280,6 +305,7 @@ const Chatbot = () => {
       throw new Error(error.message);
     }
     const data = await response.json();
+    setWaitingLiveAgent(true)
     // console.log('if success : ', data.success)
     if (data.success === 'Success') {
       setLiveAgent(true);
@@ -375,6 +401,7 @@ const Chatbot = () => {
         }),
       });
       const ratingData = await response.json();
+      setCloseRating(true)
       console.log("rating data : ", ratingData)
     } catch (error) {
       console.error(error);
@@ -396,8 +423,9 @@ const Chatbot = () => {
     <Layout>
       {/* chat top header =======================*/}
       <div className={`${styles.chatTopBar} d-flex flex-row `}>
-        <div className="text-center d-flex flex-row justify-content-between px-2">
+        <div className="col-12 text-center d-flex flex-row justify-content-between px-2">
           <Image src="/chat-top-bar.png" alt="AI" width={150} height={30} />
+          <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
         </div>
       </div>
       {/* chat top header end =======================*/}
@@ -438,7 +466,7 @@ const Chatbot = () => {
                   started.
                 </p>
                 <p className="">
-                مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.
+                  مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.
                 </p>
                 {/* <p className="">
                   வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு,
@@ -568,16 +596,29 @@ const Chatbot = () => {
             let userStyles = 'justify-content-end flex-row-reverse float-end';
 
             if (message.type === 'apiMessage') {
-              icon = (
-                <Image
-                  src={agentImage}
-                  alt="AI"
-                  width="40"
-                  height="40"
-                  className={styles.botImage}
-                  priority
-                />
-              );
+              if(imgLiveBot === 'bot'){
+                icon = (
+                  <Image
+                    src="/chat-header.png"
+                    alt="AI"
+                    width="40"
+                    height="40"
+                    className={styles.botImage}
+                    priority
+                  />
+                );
+              }else{
+                icon = (
+                  <Image
+                    src={agentImage}
+                    alt="AI"
+                    width="40"
+                    height="40"
+                    className={styles.botImage}
+                    priority
+                  />
+                );
+              }
               className = styles.apimessage;
               userStyles = 'justify-content-start flex-row float-start';
               wrapper = 'align-items-start justify-content-start';
@@ -607,7 +648,7 @@ const Chatbot = () => {
             //   message.type === 'apiMessage' &&
             //   message.message.includes("Hmm, I'm not sure" || "හ්ම්, මට විශ්වාස නෑ." || "ஹ்ம்ம், எனக்கு உறுதியாக தெரியவில்லை") &&
             //   index === chatMessages.length - 1;
-            const notSureMessages = ["Hmm, I'm not sure", "I'm sorry", "There is no question", "أنا آسف", "هم، لست متأكدا","من دون شك"];
+            const notSureMessages = ["Hmm, I'm not sure", "I'm sorry", "There is no question", "أنا آسف", "هم، لست متأكدا", "من دون شك"];
             const isLastApiMessageWithNotSure =
               message.type === 'apiMessage' &&
               notSureMessages.some((text) => message.message.includes(text)) &&
@@ -622,7 +663,9 @@ const Chatbot = () => {
                   <div
                     className={`${styles.botChatMsgContainer} ${userStyles} d-flex my-2`}
                   >
-                    <div className="d-flex">{icon}</div>
+                    <div className="d-flex">
+                      {icon}
+                    </div>
                     <div className={`${wrapper} d-flex flex-column ms-2`}>
                       <div
                         className={`${styles.botMessageContainer} ${userHomeStyles} d-flex flex-column my-1`}
@@ -654,9 +697,21 @@ const Chatbot = () => {
             );
           })}
           {/* user and api messages end =================*/}
+          {
+            waitingLiveAgent && (
+              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+                <p className='mb-0'>Please wait...</p>
+              </div>
+            )
+          }
 
-
-
+          {
+            closeState && (
+              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+                <p className='mb-0'>This chat is closed</p>
+              </div>
+            )
+          }
 
           {/* show rating =================*/}
           {showChatRating && (
@@ -725,7 +780,13 @@ const Chatbot = () => {
           }
           {/* show rating end =================*/}
 
-
+          {
+            closeRating && (
+              <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
+                <p className='mb-0'>Thank you for your feedback</p>
+              </div>
+            )
+          }
 
 
 
