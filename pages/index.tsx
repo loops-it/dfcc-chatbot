@@ -67,7 +67,7 @@ export default function Home() {
           <div className='d-flex flex-column justify-content-center align-items-center'>
             <div className={`${styles.chatSelectBox}  col-12  p-3 d-flex flex-column align-items-center ${styles.boxColor1} me-lg-2 mb-2 mb-lg-0`}>
               <Link href={'/chatbot'} >
-                <p className='text-dark text-uppercase mb-0'><strong>CONNECT VIA DFCC GPT</strong></p>
+                <p className='text-dark text-uppercase mb-0'><strong>CONNECT WITH AI ASSISTANT</strong></p>
               </Link>
             </div>
             <div className={`${styles.chatSelectBox} col-12  p-3 d-flex flex-column align-items-center ${styles.boxColor2} me-lg-2 mb-2 mb-lg-0`}>
@@ -76,7 +76,7 @@ export default function Home() {
               </Link>
             </div>
             
-            <div className={`${styles.chatSelectBox} col-12  p-3 d-flex flex-column align-items-center ${styles.boxColor3} me-lg-2 mb-2 mb-lg-0`}>
+            {/* <div className={`${styles.chatSelectBox} col-12  p-3 d-flex flex-column align-items-center ${styles.boxColor3} me-lg-2 mb-2 mb-lg-0`}>
               <Link href={'/videobot'} >
                 <p className='text-dark text-uppercase mb-0'><strong>CONNECT VIA VIDEO</strong></p>
               </Link>
@@ -86,7 +86,7 @@ export default function Home() {
               <Link href={'/audiobot'} >
                 <p className='text-dark text-uppercase mb-0'><strong>CONNECT VIA AUDIO</strong></p>
               </Link>
-          </div>
+          </div> */}
           </div>
 
         </div>
