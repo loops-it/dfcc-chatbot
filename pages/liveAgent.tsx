@@ -50,6 +50,7 @@ const LiveAgent = () => {
   const [agentImage, setAgentImage] = useState('/chat-header.png');
   const [timerRunning, setTimerRunning] = useState(false);
   const [closeRating, setCloseRating] = useState(false);
+  const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
 
 
 
@@ -130,7 +131,7 @@ const LiveAgent = () => {
               setAgentImage("https://solutions.it-marketing.website/uploads/"+data.profile_picture);
             }
             setAgentName(data.agent_name);
-            
+            setWaitingLiveAgent(false)
             setAgentInfoMsg(true);
             if(data.agent_message != null){
               setMessageState((state) => ({
@@ -158,7 +159,7 @@ const LiveAgent = () => {
       console.log("chat closed")
     }
     
-  }, [timerRunning, id]);
+  }, [timerRunning, id, waitingLiveAgent]);
 
   useEffect(() => {
     console.log(selectedLanguage);
@@ -222,6 +223,7 @@ const LiveAgent = () => {
       throw new Error(error.message);
     }
     const data = await response.json();
+    setWaitingLiveAgent(true)
     if(data.success === "Added"){
       setTimerRunning(true);
       setAlertMessage(data.success);
@@ -458,6 +460,13 @@ const LiveAgent = () => {
               </>
             );
           })}
+           {
+            waitingLiveAgent && (
+              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+                <p className='mb-0'>Please wait...</p>
+              </div>
+            )
+          }
           {
             closeState && (
               <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
