@@ -357,7 +357,7 @@ const LiveAgent = () => {
                           ...state.messages,
                           {
                             type: 'apiMessage',
-                            message: 'English',
+                            message: 'Please ask your question in English.',
                           },
                         ],
                         pending: undefined,
@@ -373,7 +373,7 @@ const LiveAgent = () => {
                           ...state.messages,
                           {
                             type: 'apiMessage',
-                            message: 'من هنا يمكنك الاتصال بالعربية',
+                            message: 'الرجاء طرح سؤالك باللغة الإنجليزية.',
                           },
                         ],
                         pending: undefined,
