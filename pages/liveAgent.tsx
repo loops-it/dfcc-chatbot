@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
@@ -52,6 +53,8 @@ const LiveAgent = () => {
   const [closeRating, setCloseRating] = useState(false);
   const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
 
+  const [timerCount, setTimerCount] = useState(0);
+
 
 
   useEffect(() => {
@@ -71,94 +74,100 @@ const LiveAgent = () => {
 
 
   const [closeState, setCloseState] = useState(false);
-  const handleCloseChat =async ()=>{
+  const handleCloseChat = async () => {
     setCloseState(true)
 
     const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ chatId: id }),
+    });
+
+    if (response.status !== 200) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+    const data = await response.json();
+    console.log(data.success)
+
+    if (data.success === 'success') {
+      setShowChatRating(true)
+    }
+    else {
+      setShowChatRating(false)
+    }
+  }
+
+  useEffect(() => {
+    let counter = 0;
+    counter = counter + 1;
+    console.log("counter",counter)
+    if (closeState === false) {
+      let intervalId: any;
+      if (timerRunning) {
+        // counter ++;
+        // console.log("counter",counter)
+        // setTimerCount(counter)
+        console.log("dasd", id)
+        intervalId = setInterval(async () => {
+          const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ chatId: id }),
           });
-  
+
           if (response.status !== 200) {
             const error = await response.json();
             throw new Error(error.message);
           }
           const data = await response.json();
-          console.log(data.success)
-    
-          if(data.success === 'success'){
-            setShowChatRating(true)
-          }
-          else{
-            setShowChatRating(false)
-          }
-  }
 
-  useEffect(() => {
-    if(closeState === false){
-      let intervalId: any;
-    if (timerRunning){
-      console.log("dasd",id)
-      intervalId = setInterval(async () => {
-        const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ chatId: id }),
-        });
-  
-        if (response.status !== 200) {
-          const error = await response.json();
-          throw new Error(error.message);
-        }
-        const data = await response.json();
-  
-        if(data.chat_status === "closed"){
-          setShowChatRating(true);
-        }
-        else{
-          setShowChatRating(false);
-          setAgentInfoMsg(false);
-          if(data.agent_id != "unassigned"){
-            if(!data.profile_picture){
-              setAgentImage("/chat-header.png");
-            }
-            else{
-              setAgentImage("https://solutions.it-marketing.website/uploads/"+data.profile_picture);
-            }
-            setAgentName(data.agent_name);
-            setWaitingLiveAgent(false)
-            setAgentInfoMsg(true);
-            if(data.agent_message != null){
-              setMessageState((state) => ({
-                ...state,
-                messages: [
-                  ...state.messages,
-                  {
-                    type: 'apiMessage',
-                    message: data.agent_message,
-                  },
-                ],
-                pending: undefined,
-              }));
-            }
+          if (data.chat_status === "closed") {
+            setShowChatRating(true);
           }
-          
-        } 
-      }, 5000);
+          else {
+            setShowChatRating(false);
+            setAgentInfoMsg(false);
+            if (data.agent_id != "unassigned") {
+              if (!data.profile_picture) {
+                setAgentImage("/chat-header.png");
+              }
+              else {
+                setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
+              }
+              setAgentName(data.agent_name);
+              setWaitingLiveAgent(false)
+              setAgentInfoMsg(true);
+              if (data.agent_message != null) {
+                setMessageState((state) => ({
+                  ...state,
+                  messages: [
+                    ...state.messages,
+                    {
+                      type: 'apiMessage',
+                      message: data.agent_message,
+                    },
+                  ],
+                  pending: undefined,
+                }));
+              }
+            }
 
+          }
+        }, 5000);
+
+      }
+
+      return () => clearInterval(intervalId);
     }
-
-    return () => clearInterval(intervalId);
-    }
-  else{
+    else {
       console.log("chat closed")
     }
-    
+
   }, [timerRunning, id, waitingLiveAgent]);
 
   useEffect(() => {
@@ -169,6 +178,12 @@ const LiveAgent = () => {
   useEffect(() => {
     textAreaRef.current?.focus();
   }, []);
+
+
+
+
+
+
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -185,7 +200,7 @@ const LiveAgent = () => {
     console.log('question from user : ', question);
 
 
-    
+
     // set user message array
     setMessageState((state) => ({
       ...state,
@@ -224,17 +239,17 @@ const LiveAgent = () => {
     }
     const data = await response.json();
     setWaitingLiveAgent(true)
-    if(data.success === "Added"){
+    if (data.success === "Added") {
       setTimerRunning(true);
       setAlertMessage(data.success);
       setLoading(false);
       setShowAlert(true);
     }
-    else{
+    else {
       console.log('response : ', 'Insert Fail');
     }
 
-    
+
 
     const ctrl = new AbortController();
   }
@@ -242,22 +257,28 @@ const LiveAgent = () => {
 
 
 
+
+
+
+
+
+
   async function sendRateValues() {
     try {
-        const response = await fetch('/api/star_rating', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chatId: id,
-            ratingValue: rating,
-            feedbackMessage: inputValue,
-          }),
-        });
-        const ratingData = await response.json();
-        console.log("rating data : ",ratingData)
-        setCloseRating(true)
+      const response = await fetch('/api/star_rating', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId: id,
+          ratingValue: rating,
+          feedbackMessage: inputValue,
+        }),
+      });
+      const ratingData = await response.json();
+      console.log("rating data : ", ratingData)
+      setCloseRating(true)
     } catch (error) {
       console.error(error);
     }
@@ -314,87 +335,87 @@ const LiveAgent = () => {
     <Layout>
       {/* chat top header */}
       <div className={`${styles.chatTopBar} d-flex flex-row`}>
-      <div className="col-12 text-center d-flex flex-row justify-content-between px-2 px-lg-2">
-        <Image
-                src="/chat-top-bar.png"
-                alt="AI"
-                width={150}
-                height={30}
-              />
-              <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
+        <div className="col-12 text-center d-flex flex-row justify-content-between px-2 px-lg-2">
+          <Image
+            src="/chat-top-bar.png"
+            alt="AI"
+            width={150}
+            height={30}
+          />
+          <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
         </div>
       </div>
 
       <div className={`${styles.messageWrapper}`}>
-      <div
-            className={`${styles.botChatMsgContainer} d-flex flex-column my-2`}
-          >
-            <div className="d-flex">
+        <div
+          className={`${styles.botChatMsgContainer} d-flex flex-column my-2`}
+        >
+          <div className="d-flex">
+            <Image
+              src="/chat-header.png"
+              alt="AI"
+              width="40"
+              height="40"
+            /></div>
+          <div className={`d-flex flex-column py-3`}>
+            <div
+              className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
+            >
               <Image
-                src="/chat-header.png"
+                src="/language-img.png"
                 alt="AI"
-                width="40"
-                height="40"
-              /></div>
-            <div className={`d-flex flex-column py-3`}>
-              <div
-                className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
-              >
-                <Image
-                  src="/language-img.png"
-                  alt="AI"
-                  width={250}
-                  height={180}
-                />
-                <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
-                <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
+                width={250}
+                height={180}
+              />
+              <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
+              <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
 
-                <div className="d-flex flex-row welcome-language-select">
-                  <div className="col-6 p-1">
-                    <button className=' px-3 py-2 rounded' onClick={() => {
-                      setSelectedLanguage('English');
-                      setMessageState((state) => ({
-                        ...state,
-                        messages: [
-                          ...state.messages,
-                          {
-                            type: 'apiMessage',
-                            message: 'Please ask your question in English.',
-                          },
-                        ],
-                        pending: undefined,
-                      }));
-                    }}>English</button>
-                  </div>
-                  <div className="col-6 p-1">
-                    <button className='px-2 py-2 rounded' onClick={() => {
-                      setSelectedLanguage('Arabic');
-                      setMessageState((state) => ({
-                        ...state,
-                        messages: [
-                          ...state.messages,
-                          {
-                            type: 'apiMessage',
-                            message: 'الرجاء طرح سؤالك باللغة الإنجليزية.',
-                          },
-                        ],
-                        pending: undefined,
-                      }));
-                    }}>Arabic</button>
-                  </div>
+              <div className="d-flex flex-row welcome-language-select">
+                <div className="col-6 p-1">
+                  <button className=' px-3 py-2 rounded' onClick={() => {
+                    setSelectedLanguage('English');
+                    setMessageState((state) => ({
+                      ...state,
+                      messages: [
+                        ...state.messages,
+                        {
+                          type: 'apiMessage',
+                          message: 'Please ask your question in English.',
+                        },
+                      ],
+                      pending: undefined,
+                    }));
+                  }}>English</button>
+                </div>
+                <div className="col-6 p-1">
+                  <button className='px-2 py-2 rounded' onClick={() => {
+                    setSelectedLanguage('Arabic');
+                    setMessageState((state) => ({
+                      ...state,
+                      messages: [
+                        ...state.messages,
+                        {
+                          type: 'apiMessage',
+                          message: 'الرجاء طرح سؤالك باللغة الإنجليزية.',
+                        },
+                      ],
+                      pending: undefined,
+                    }));
+                  }}>Arabic</button>
                 </div>
               </div>
-              {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
             </div>
+            {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
           </div>
-      {
-            agentInfoMsg && (
-              <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
-                Now you are chatting with {agentName}
-                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            )
-          }
+        </div>
+        {
+          agentInfoMsg && (
+            <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
+              Now you are chatting with {agentName}
+              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          )
+        }
         <div
           ref={messageListRef}
           className={`${styles.messageContentWrapper} d-flex flex-column`}
@@ -460,7 +481,7 @@ const LiveAgent = () => {
               </>
             );
           })}
-           {
+          {
             waitingLiveAgent && (
               <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
                 <p className='mb-0'>Please wait...</p>
@@ -476,67 +497,67 @@ const LiveAgent = () => {
           }
           {showChatRating && (
             <div className="d-flex flex-column" id='chatRating'>
-            <div className="d-flex">
-              <Image src="/chat-header.png" alt="AI" width="40" height="40" />
-            </div>
-            <div className={`d-flex flex-column px-1 py-2 p-lg-0  ms-lg-2`}>
-              <div
-                className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
-              >
-                <div className="container-fluid m-0 p-0">
-                  <div
-                    className={`${styles.botRateRequest} d-flex flex-row my-2 mx-2`}
-                  >
+              <div className="d-flex">
+                <Image src="/chat-header.png" alt="AI" width="40" height="40" />
+              </div>
+              <div className={`d-flex flex-column px-1 py-2 p-lg-0  ms-lg-2`}>
+                <div
+                  className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
+                >
+                  <div className="container-fluid m-0 p-0">
                     <div
-                      className={`${styles.botRatingContainer} d-flex flex-column my-1`}
+                      className={`${styles.botRateRequest} d-flex flex-row my-2 mx-2`}
                     >
-                      <p className={`${styles.rateTitle} mb-0 text-dark`}>
-                        Rate your conversation
-                      </p>
-                      <p className="text-dark mb-0">Add your rating</p>
-                      <div className="star-rating">
-                        {[...Array(5)].map((star, index) => {
-                          index += 1;
-                          return (
-                            <button
-                              type="button"
-                              key={index}
-                              className={
-                                index <= (hover || rating) ? 'on' : 'off'
-                              }
-                              onClick={() => {
-                                setRating(index);
-                              }}
-                              onMouseEnter={() => setHover(index)}
-                              onMouseLeave={() => setHover(rating)}
-                            >
-                              <span className="star">&#9733;</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <p className={` mb-0 mt-3 text-dark`}>Your feedback :</p>
-                      <textarea
-                        className={`${styles.textarea} p-2 rounded`}
-                        rows={3}
-                        maxLength={512}
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                      />
-
-                      <button
-                        onClick={sendRateValues}
-                        className="text-white bg-dark p-2 mt-2 rounded"
+                      <div
+                        className={`${styles.botRatingContainer} d-flex flex-column my-1`}
                       >
-                        SEND
-                      </button>
+                        <p className={`${styles.rateTitle} mb-0 text-dark`}>
+                          Rate your conversation
+                        </p>
+                        <p className="text-dark mb-0">Add your rating</p>
+                        <div className="star-rating">
+                          {[...Array(5)].map((star, index) => {
+                            index += 1;
+                            return (
+                              <button
+                                type="button"
+                                key={index}
+                                className={
+                                  index <= (hover || rating) ? 'on' : 'off'
+                                }
+                                onClick={() => {
+                                  setRating(index);
+                                }}
+                                onMouseEnter={() => setHover(index)}
+                                onMouseLeave={() => setHover(rating)}
+                              >
+                                <span className="star">&#9733;</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className={` mb-0 mt-3 text-dark`}>Your feedback :</p>
+                        <textarea
+                          className={`${styles.textarea} p-2 rounded`}
+                          rows={3}
+                          maxLength={512}
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                        />
+
+                        <button
+                          onClick={sendRateValues}
+                          className="text-white bg-dark p-2 mt-2 rounded"
+                        >
+                          SEND
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
               </div>
-              {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
             </div>
-          </div>
           )
           }
           {
@@ -553,39 +574,39 @@ const LiveAgent = () => {
       <div className={`${styles.inputContainer}`}>
         {/* <form onSubmit={handleSubmit}> */}
         {/* <button className='close-button' onClick={handleCloseChat}><AiOutlineClose /> </button> */}
-          <textarea
-            disabled={loading}
-            onKeyDown={handleEnter}
-            ref={textAreaRef}
-            autoFocus={false}
-            rows={1}
-            maxLength={512}
-            id="userInput"
-            name="userInput"
-            placeholder={
-              loading
-                ? 'Waiting for response...'
-                : 'What is this question about?'
-            }
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className={styles.textarea}
-          />
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className={`${styles.inputIconContainer} `}
-          >
-            {loading ? (
-              <div className={styles.loadingwheel}>
-                <LoadingDots color="#fff" />
-                {/* <LoadingIcons.ThreeDots /> */}
-              </div>
-            ) : (
-              // Send icon SVG in input field
-              <AiOutlineSend className={styles.sendIcon} />
-            )}
-          </button>
+        <textarea
+          disabled={loading}
+          onKeyDown={handleEnter}
+          ref={textAreaRef}
+          autoFocus={false}
+          rows={1}
+          maxLength={512}
+          id="userInput"
+          name="userInput"
+          placeholder={
+            loading
+              ? 'Waiting for response...'
+              : 'What is this question about?'
+          }
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className={styles.textarea}
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`${styles.inputIconContainer} `}
+        >
+          {loading ? (
+            <div className={styles.loadingwheel}>
+              <LoadingDots color="#fff" />
+              {/* <LoadingIcons.ThreeDots /> */}
+            </div>
+          ) : (
+            // Send icon SVG in input field
+            <AiOutlineSend className={styles.sendIcon} />
+          )}
+        </button>
         {/* </form> */}
       </div>
       {error && (
@@ -593,7 +614,7 @@ const LiveAgent = () => {
           <p className="text-red-500">{error}</p>
         </div>
       )}
-      
+
       {/* input fields ================= */}
     </Layout>
   );
