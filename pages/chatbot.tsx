@@ -447,7 +447,7 @@ const Chatbot = () => {
                 </p>
 
                 <div className="d-flex flex-row welcome-language-select">
-                  <div className="col-4 p-1">
+                  <div className="col-6 p-1">
                     <button
                       className=" px-3 py-2 rounded"
                       onClick={() => {
@@ -458,7 +458,7 @@ const Chatbot = () => {
                             ...state.messages,
                             {
                               type: 'apiMessage',
-                              message: 'English',
+                              message: 'From here you can connect in English',
                             },
                           ],
                           pending: undefined,
@@ -468,29 +468,29 @@ const Chatbot = () => {
                       English
                     </button>
                   </div>
-                  <div className="col-4 p-1">
+                  <div className="col-6 p-1">
                     <button
                       className="px-3 py-2 rounded"
                       onClick={() => {
-                        setSelectedLanguage('Sinhala');
+                        setSelectedLanguage('Arabic');
                         setMessageState((state) => ({
                           ...state,
                           messages: [
                             ...state.messages,
                             {
                               type: 'apiMessage',
-                              message: 'Sinhala',
+                              message: 'من هنا يمكنك الاتصال بالعربية',
                             },
                           ],
                           pending: undefined,
                         }));
                       }}
                     >
-                      Sinhala
+                      Arabic
                     </button>
                   </div>
 
-                  <div className="col-4 p-1">
+                  {/* <div className="col-4 p-1">
                     <button
                       className="px-3 py-2 rounded"
                       onClick={() => {
@@ -510,7 +510,7 @@ const Chatbot = () => {
                     >
                       Tamil
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -608,7 +608,7 @@ const Chatbot = () => {
             //   message.type === 'apiMessage' &&
             //   message.message.includes("Hmm, I'm not sure" || "හ්ම්, මට විශ්වාස නෑ." || "ஹ்ம்ம், எனக்கு உறுதியாக தெரியவில்லை") &&
             //   index === chatMessages.length - 1;
-            const notSureMessages = ["Hmm, I'm not sure", "I'm sorry", "There is no question", "මට කණගාටුයි", "හ්ම්, මට විශ්වාස නෑ.", "மன்னிக்கவும்", "ஹ்ம்ம், எனக்கு உறுதியாக தெரியவில்லை"];
+            const notSureMessages = ["Hmm, I'm not sure", "I'm sorry", "There is no question", "أنا آسف", "هم، لست متأكدا","من دون شك"];
             const isLastApiMessageWithNotSure =
               message.type === 'apiMessage' &&
               notSureMessages.some((text) => message.message.includes(text)) &&
