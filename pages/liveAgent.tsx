@@ -370,11 +370,11 @@ const LiveAgent = () => {
                   height={180}
                 />
                 <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
-                <p className="">ආයුබෝවන්, DFCC බැංකුවට සාදරයෙන් පිළිගනිමු. ඔබේ ප්‍රශ්නවලට පිළිතුරු සැපයීම සඳහා කරුණාකර භාෂාව තෝරන්න.</p>
-                <p className="">வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு, விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்</p>
+                <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
+                {/* <p className="">வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு, விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்</p> */}
 
                 <div className="d-flex flex-row welcome-language-select">
-                  <div className="col-4 p-1">
+                  <div className="col-6 p-1">
                     <button className=' px-3 py-2 rounded' onClick={() => {
                       setSelectedLanguage('English');
                       setMessageState((state) => ({
@@ -390,24 +390,24 @@ const LiveAgent = () => {
                       }));
                     }}>English</button>
                   </div>
-                  <div className="col-4 p-1">
+                  <div className="col-6 p-1">
                     <button className='px-2 py-2 rounded' onClick={() => {
-                      setSelectedLanguage('Sinhala');
+                      setSelectedLanguage('Arabic');
                       setMessageState((state) => ({
                         ...state,
                         messages: [
                           ...state.messages,
                           {
                             type: 'apiMessage',
-                            message: 'Sinhala',
+                            message: 'من هنا يمكنك الاتصال بالعربية',
                           },
                         ],
                         pending: undefined,
                       }));
-                    }}>Sinhala</button>
+                    }}>Arabic</button>
                   </div>
 
-                  <div className="col-4 p-1">
+                  {/* <div className="col-4 p-1">
                     <button className='px-3 py-2 rounded' onClick={() => {
                       setSelectedLanguage('Tamil');
                       setMessageState((state) => ({
@@ -422,7 +422,7 @@ const LiveAgent = () => {
                         pending: undefined,
                       }));
                     }}>Tamil</button>
-                  </div>
+                  </div> */}
 
                 </div>
               </div>

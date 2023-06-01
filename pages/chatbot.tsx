@@ -438,13 +438,12 @@ const Chatbot = () => {
                   started.
                 </p>
                 <p className="">
-                  ආයුබෝවන්, DFCC බැංකුවට සාදරයෙන් පිළිගනිමු. ඔබේ ප්‍රශ්නවලට
-                  පිළිතුරු සැපයීම සඳහා කරුණාකර භාෂාව තෝරන්න.
+                مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.
                 </p>
-                <p className="">
+                {/* <p className="">
                   வணக்கம், DFCC வங்கிக்கு உங்களை வரவேற்கிறோம். தொடர்வதற்கு,
                   விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்
-                </p>
+                </p> */}
 
                 <div className="d-flex flex-row welcome-language-select">
                   <div className="col-6 p-1">
