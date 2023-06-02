@@ -372,7 +372,7 @@ console.log(waitingLiveAgent)
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent]);
+  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent, agentInfoMsg]);
 
 
 
@@ -535,14 +535,14 @@ console.log(waitingLiveAgent)
 
 
         {/* show live agent info =================*/}
-        {
+        {/* {
           agentInfoMsg && (
             <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
               Now you are chatting with {agentName}
               <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           )
-        }
+        } */}
         {/* show live agent info =================*/}
 
 
@@ -676,7 +676,14 @@ console.log(waitingLiveAgent)
               </div>
             )
           }
-
+          {
+          agentInfoMsg && (
+            <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
+              Now you are chatting with {agentName}
+              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          )
+        }
           {
             closeState && (
               <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
