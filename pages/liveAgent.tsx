@@ -393,7 +393,7 @@ const LiveAgent = () => {
               <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
               <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
 
-              <div className="d-flex flex-row welcome-language-select">
+              <div className="d-flex flex-row welcome-language-select w-100">
                 <div className="col-6 p-1">
                   <button className=' px-3 py-2 rounded' onClick={() => {
                     setSelectedLanguage('English');
@@ -431,14 +431,6 @@ const LiveAgent = () => {
             {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
           </div>
         </div>
-        {/* {
-          agentInfoMsg && (
-            <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
-              Now you are chatting with {agentName}
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          )
-        } */}
         <div
           className={`${styles.messageContentWrapper} d-flex flex-column`}
         >

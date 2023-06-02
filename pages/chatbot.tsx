@@ -469,7 +469,7 @@ console.log(waitingLiveAgent)
                   مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.
                 </p>
 
-                <div className="d-flex flex-row welcome-language-select">
+                <div className="d-flex flex-row welcome-language-select w-100">
                   <div className="col-6 p-1">
                     <button
                       className=" px-3 py-2 rounded"
@@ -522,29 +522,6 @@ console.log(waitingLiveAgent)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {/* show live agent info =================*/}
-        {/* {
-          agentInfoMsg && (
-            <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
-              Now you are chatting with {agentName}
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          )
-        } */}
-        {/* show live agent info =================*/}
 
 
         {/* message conversation container =================*/}
