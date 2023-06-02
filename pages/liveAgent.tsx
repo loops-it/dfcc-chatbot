@@ -339,8 +339,7 @@ const LiveAgent = () => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatMessages]);
-
+  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent]);
 
 
 
@@ -369,7 +368,7 @@ const LiveAgent = () => {
         </div>
       </div>
 
-      <div className={`${styles.messageWrapper}`}>
+      <div ref={messageListRef}  className={`${styles.messageWrapper}`}>
         <div
           className={`${styles.botChatMsgContainer} d-flex flex-column my-2`}
         >
@@ -440,7 +439,6 @@ const LiveAgent = () => {
           )
         }
         <div
-          ref={messageListRef}
           className={`${styles.messageContentWrapper} d-flex flex-column`}
         >
           {chatMessages.map((message, index) => {

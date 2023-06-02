@@ -322,7 +322,7 @@ const Videobot = () => {
         </div>
       </div>
       {/* chat message area */}
-      <div className={`${styles.messageWrapper}`} style={{ height: "74vh" }}>
+      <div ref={messageListRef} className={`${styles.messageWrapper}`} style={{ height: "74vh" }}>
         <div className="d-flex justify-content-center py-3">
           <video id='videoplayer' width="250" height="250" autoPlay style={{ borderRadius: '50%' }} >
             <source src={avatarUrl} type="video/mp4"></source>
@@ -330,7 +330,6 @@ const Videobot = () => {
           </video>
         </div>
         <div
-          ref={messageListRef}
           className={`${styles.messageContentWrapper} d-flex flex-column`}
         >
 

@@ -260,9 +260,9 @@ const AudioBot = () => {
         </div>
       </div>
       {/* chat message area */}
-      <div className={`${styles.messageWrapper}`} style={{height: "74vh"}}>
+      <div ref={messageListRef} className={`${styles.messageWrapper}`} style={{height: "74vh"}}>
         <div
-          ref={messageListRef}
+          
           className={`${styles.messageContentWrapper} d-flex flex-column`}
         >
           {chatMessages.map((message, index) => {
