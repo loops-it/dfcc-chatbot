@@ -124,7 +124,8 @@ const LiveAgent = () => {
           }
           const data = await response.json();
 
-          if (data.chat_status === "closed") {
+          console.log("is_time_out : ",data.is_time_out)
+          if ((data.chat_status === "closed") && (data.is_time_out !== "yes")) {
             setShowChatRating(true);
           }
           else {
@@ -156,8 +157,8 @@ const LiveAgent = () => {
             }
             else {
               
-              if (counter > 6) {
-                const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
+              if (counter > 5) {
+                const response = await fetch('https://solutions.it-marketing.website/chat-timeout', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
