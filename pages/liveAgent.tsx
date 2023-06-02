@@ -339,7 +339,7 @@ const LiveAgent = () => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent]);
+  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent, busyAgent]);
 
 
 
