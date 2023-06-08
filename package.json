@@ -39,7 +39,9 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-loading-icons": "^1.1.0",
-    "react-markdown": "^8.0.5"
+    "react-markdown": "^8.0.5",
+    "react-speech-recognition": "^3.10.0",
+    "regenerator-runtime": "^0.13.11"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.6",
@@ -47,6 +49,8 @@
     "@types/node": "^18.14.6",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-speech-recognition": "^3.9.2",
+    "@types/regenerator-runtime": "^0.13.1",
     "@typescript-eslint/parser": "^5.54.0",
     "autoprefixer": "^10.4.13",
     "eslint": "8.35.0",

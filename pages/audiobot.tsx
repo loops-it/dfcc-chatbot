@@ -1,13 +1,22 @@
-import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useRef, useState, useEffect, useMemo } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
 import { Message } from '@/types/chat';
-import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Image from 'next/image';
-import { BsFillMicMuteFill, BsFillMicFill } from 'react-icons/bs';
 import { Document } from 'langchain/document';
-import axios from 'axios';
-import { data } from 'jquery';
+import dynamic from 'next/dynamic';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { BsFillMicFill, BsFillMicMuteFill } from 'react-icons/bs';
+
+
+const DynamicSpeechRecognition = dynamic(
+  () => import('../components/SpeechRecog'),
+  {
+    ssr: false,
+    loading: () => <p>Loading...</p>,
+  }
+);
 
 const AudioBot = () => {
   const [query, setQuery] = useState<string>('');
@@ -52,98 +61,27 @@ const AudioBot = () => {
   }, [apiMessageFinal, messages]);
 
 
-
-  // useEffect(() => {
-  //   // get api message in to one state
-  //   try {
-  //     const latestApiMessage = messageState.messages.reduce((acc, message) => {
-  //       if (message.type === 'apiMessage') {
-  //         return message.message;
-  //       }
-  //       console.log('acc : ', acc)
-  //       return acc;
-
-  //     }, '');
-
-  //     setApiMessageFinal(latestApiMessage);
-  //     setMsgUpdated(true);
-  //     console.log('apiMessageFinal : ', apiMessageFinal)
-  //     if (msgUpdated === true) {
-  //       console.log(" msgUpdated : ", msgUpdated);
-  //       handleSpeak()
-  //       // setTimeout(async ()=> {
-  //       //         await handleVideo();
-  //       //       },5000)
-  //     }
-
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-
-  // }, [apiMessageFinal, msgUpdated]);
-
-  // async function handleSpeak(){
-    
-
-  // }
-
-
   
 
 
 
   //handle form submission
-  async function handleSubmit() {
+  async function handleSubmit(transcriptMsg: string) {
 
     setError(null);
     setLoading(true);
-    // const response = await fetch('https://solutions.it-marketing.website/recording-start', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     chatId: id,
-    //     apiType: "audio",
-    //   }),
-    // });
+    const question = transcriptMsg;
 
-    // if (response.status !== 200) {
-    //   const error = await response.json();
-    //   throw new Error(error.message);
-    // }
-    // const data = await response.json();
+       
+    
 
-    const response = await fetch('/api/speech_recognition', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        body: JSON.stringify({
-        chatId: id,
-        apiType: "audio"
-      }),
-    });
-
-    if (response.status !== 200) {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
-
-    const data = await response.json();
-    console.log("response : ",data)
-    console.log("audiobot : ",data.transcript.transcript)
-
-
-    if (data.transcript.status === "success") {
-      const question = data.transcript.transcript;
-      console.log("audiobot : ",question)
+    
       if (!question) {
         alert('Racording failed!');
         setLoading(false);
         return;
       }
-  
+
       setMessageState((state) => ({
         ...state,
         messages: [
@@ -155,20 +93,22 @@ const AudioBot = () => {
         ],
         pending: undefined,
       }));
-  
+      
       setQuery('');
       setMessageState((state) => ({ ...state, pending: '' }));
   
       const ctrl = new AbortController();
-  
+    // https://solutions.it-marketing.website/audio-chatGpt-response
+
       try {
-        const response = await fetch('https://solutions.it-marketing.website/audio-chatGpt-response', {
+        const response = await fetch('https://solutions.it-marketing.website/translate-to-english-api', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            question: question,
+            user_Message: question,
+            language: "English",
             chatId: id,
           }),
         });
@@ -177,20 +117,24 @@ const AudioBot = () => {
           throw new Error(error.message);
         }
         const data = await response.json();
+        console.log("open ai data",data)
+
+
+
         setMessageState((state) => ({
           history: [...state.history, [question, state.pending ?? '']],
           messages: [
             ...state.messages,
             {
               type: 'apiMessage',
-              message: data.finalResponse,
+              message: data.bot_reply,
               sourceDocs: state.pendingSourceDocs,
             },
           ],
           pending: undefined,
           pendingSourceDocs: undefined,
         }));
-        setApiMessageFinal(data.finalResponse)
+        setApiMessageFinal(data.bot_reply)
         // setMsgUpdated(false);
         setLoading(false);
   
@@ -199,7 +143,7 @@ const AudioBot = () => {
         setError('An error occurred while fetching the data. Please try again.');
         console.log('error', error);
       }
-    }
+    // }
     
     
   }
@@ -271,7 +215,7 @@ const AudioBot = () => {
             let userHomeStyles;
             let wrapper = 'align-items-end justify-content-end';
             let userStyles = 'justify-content-end flex-row-reverse float-end';
-            console.log('message : => ', message.message);
+            // console.log('message : => ', message.message);
             if (message.type === 'apiMessage') {
               icon = (
                 <Image
@@ -332,20 +276,22 @@ const AudioBot = () => {
 
       {/* input fields =================*/}
       <div className={`${styles.inputContainer}`}>
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className={`${styles.inputIconContainer2} `}
-        >
-          {loading ? (
-            <div className={styles.loadingwheel}>
-              <BsFillMicFill className="sendIcon" />
-            </div>
-          ) : (
+        {/* <button
+        type="button"
+        className={`${styles.inputIconContainer2} `}
+        onClick={handleButtonClick}
+      >
+        {listening ? (
+          <div className={styles.loadingwheel}>
+            <BsFillMicFill className="sendIcon" />
+          </div>
+        ) : (
+          <div className={styles.micMuteContainer}>
             <BsFillMicMuteFill className="sendIcon" />
-          )}
-        </button>
+          </div>
+        )}
+      </button> */}
+      <DynamicSpeechRecognition onSubmit={handleSubmit} />
       </div>
       {error && (
         <div className="border border-red-400 rounded-md p-4">

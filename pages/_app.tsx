@@ -6,6 +6,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
+import 'regenerator-runtime/runtime'
 
 const inter = Inter({
   variable: '--font-inter',
