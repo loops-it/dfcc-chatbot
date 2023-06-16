@@ -11,8 +11,6 @@ import { Document } from 'langchain/document';
 import axios from 'axios';
 
 const Chatbot = () => {
-
-
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,8 +40,16 @@ const Chatbot = () => {
   const [agentImage, setAgentImage] = useState('/chat-header.png');
   const [closeRating, setCloseRating] = useState(false);
   const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
-  const [imgLiveBot, setImgLiveBot] = useState("bot"); //agent
+  const [imgLiveBot, setImgLiveBot] = useState('bot'); //agent
+  const [showMessage, setShowMessage] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const now = Date.now();
@@ -56,56 +62,63 @@ const Chatbot = () => {
     textAreaRef.current?.focus();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {}, [
+    apiMessageFinal,
+    liveAgent,
+    agentName,
+    agentInfoMsg,
+    agentImage,
+    imgLiveBot,
+    messages,
+    waitingLiveAgent,
+  ]);
 
+  console.log(waitingLiveAgent);
 
-  }, [apiMessageFinal, liveAgent, agentName, agentInfoMsg, agentImage, imgLiveBot, messages, waitingLiveAgent]);
-
-
-console.log(waitingLiveAgent)
-  
   const [closeState, setCloseState] = useState(false);
   const handleCloseChat = async () => {
-    setCloseState(true)
+    setCloseState(true);
 
-    const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://solutions.it-marketing.website/chat-close-by-user',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chatId: id }),
       },
-      body: JSON.stringify({ chatId: id }),
-    });
+    );
 
     if (response.status !== 200) {
       const error = await response.json();
       throw new Error(error.message);
     }
     const data = await response.json();
-    console.log(data.success)
+    console.log(data.success);
 
     if (data.success === 'success') {
-      setShowChatRating(true)
+      setShowChatRating(true);
+    } else {
+      setShowChatRating(false);
     }
-    else {
-      setShowChatRating(false)
-    }
-  }
-
-
+  };
 
   useEffect(() => {
     if (closeState === false) {
       if (liveAgent === true) {
-        
-        console.log("----------", id)
+        console.log('----------', id);
         const interval = setInterval(async () => {
-          const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          const response = await fetch(
+            'https://solutions.it-marketing.website/live-chat-agent',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ chatId: id }),
             },
-            body: JSON.stringify({ chatId: id }),
-          });
+          );
 
           if (response.status !== 200) {
             const error = await response.json();
@@ -113,22 +126,23 @@ console.log(waitingLiveAgent)
           }
           const data = await response.json();
 
-          if (data.chat_status === "closed") {
+          if (data.chat_status === 'closed') {
             setShowChatRating(true);
-          }
-          else {
+          } else {
             setShowChatRating(false);
             setAgentInfoMsg(false);
-            if (data.agent_id != "unassigned") {
+            if (data.agent_id != 'unassigned') {
               if (!data.profile_picture) {
-                setAgentImage("/chat-header.png");
-              }
-              else {
-                setImgLiveBot('agent')
-                setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
+                setAgentImage('/chat-header.png');
+              } else {
+                setImgLiveBot('agent');
+                setAgentImage(
+                  'https://solutions.it-marketing.website/uploads/' +
+                    data.profile_picture,
+                );
               }
               setAgentName(data.agent_name);
-              setWaitingLiveAgent(false)
+              setWaitingLiveAgent(false);
               setAgentInfoMsg(true);
               if (data.agent_message != null) {
                 setMessageState((state) => ({
@@ -144,29 +158,12 @@ console.log(waitingLiveAgent)
                 }));
               }
             }
-
           }
         }, 5000);
         return () => clearInterval(interval);
       }
     }
-
   }, [id, liveAgent, waitingLiveAgent]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -200,26 +197,28 @@ console.log(waitingLiveAgent)
       setQuery('');
       setMessageState((state) => ({ ...state, pending: '' }));
 
-
       // translate to sinhala
-      const response = await fetch('https://solutions.it-marketing.website/translate-to-english-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://solutions.it-marketing.website/translate-to-english-api',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_Message: question,
+            language: selectedLanguage,
+            chatId: id,
+          }),
         },
-        body: JSON.stringify({
-          user_Message: question,
-          language: selectedLanguage,
-          chatId: id,
-        }),
-      });
+      );
 
       if (response.status !== 200) {
         const error = await response.json();
         throw new Error(error.message);
       }
       const data = await response.json();
-      if (data.status == "success") {
+      if (data.status == 'success') {
         setMessageState((state) => ({
           ...state,
           messages: [
@@ -235,20 +234,6 @@ console.log(waitingLiveAgent)
       }
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const handleLiveAgent = async (e: any) => {
     e.preventDefault();
@@ -272,13 +257,16 @@ console.log(waitingLiveAgent)
       pending: undefined,
     }));
     if (liveAgent === true) {
-      const response = await fetch('https://solutions.it-marketing.website/live-chat-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://solutions.it-marketing.website/live-chat-user',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ chatId: id, user_Message: question }),
         },
-        body: JSON.stringify({ chatId: id, user_Message: question }),
-      });
+      );
 
       if (response.status !== 200) {
         const error = await response.json();
@@ -287,39 +275,32 @@ console.log(waitingLiveAgent)
       const data = await response.json();
       setQuery('');
     }
-  }
-
-
+  };
 
   const SwitchToLiveAgent = async () => {
     // console.log('========== Switch to live agent =========')
-    const response = await fetch('https://solutions.it-marketing.website/switch-to-live-agent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://solutions.it-marketing.website/switch-to-live-agent',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chatId: id }),
       },
-      body: JSON.stringify({ chatId: id }),
-    });
+    );
 
     if (response.status !== 200) {
       const error = await response.json();
       throw new Error(error.message);
     }
     const data = await response.json();
-    setWaitingLiveAgent(true)
+    setWaitingLiveAgent(true);
     // console.log('if success : ', data.success)
     if (data.success === 'Success') {
       setLiveAgent(true);
     }
-  }
-
-
-
-
-
-
-
-
+  };
 
   //prevent empty submissions
   const handleEnter = useCallback(
@@ -337,18 +318,6 @@ console.log(waitingLiveAgent)
     [query],
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
   const chatMessages = useMemo(() => {
     return messages.filter(
       (message) =>
@@ -357,37 +326,26 @@ console.log(waitingLiveAgent)
   }, [messages]);
   // console.log('messages : ', messages);
 
-
-
-
-
-
-
-
-
-
-
-
   //scroll to bottom of chat
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent, agentInfoMsg]);
-
-
-
-
-
-
-
+  }, [
+    chatMessages,
+    closeRating,
+    showChatRating,
+    closeState,
+    waitingLiveAgent,
+    agentInfoMsg,
+  ]);
 
   async function sendRateValues() {
     // const sendData = async (botName, index) => {
     try {
-      console.log("chat id : ", id)
-      console.log("rating : ", rating)
-      console.log("feedback : ", inputValue)
+      console.log('chat id : ', id);
+      console.log('rating : ', rating);
+      console.log('feedback : ', inputValue);
 
       const response = await fetch('/api/star_rating', {
         method: 'POST',
@@ -401,23 +359,13 @@ console.log(waitingLiveAgent)
         }),
       });
       const ratingData = await response.json();
-      setCloseRating(true)
-      console.log("rating data : ", ratingData)
+      setCloseRating(true);
+      console.log('rating data : ', ratingData);
     } catch (error) {
       console.error(error);
     }
     // }
   }
-
-
-
-
-
-
-
-
-
-
 
   return (
     <Layout>
@@ -425,22 +373,20 @@ console.log(waitingLiveAgent)
       <div className={`${styles.chatTopBar} d-flex flex-row `}>
         <div className="col-12 text-center d-flex flex-row justify-content-between px-2">
           <Image src="/chat-top-bar.png" alt="AI" width={150} height={30} />
-          <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
+          <button
+            className="close-button"
+            onClick={handleCloseChat}
+            title="Close Chat"
+          >
+            <AiOutlineClose />{' '}
+          </button>
         </div>
       </div>
       {/* chat top header end =======================*/}
 
       <div ref={messageListRef} className={`${styles.messageWrapper}`}>
-
-
-
-
-
-
-
         {/* language switch message =================*/}
         <div className={styles.botMessageContainerWrapper}>
-
           <div className="d-flex justify-content-center pt-1">
             <Image src="/chat-logo.png" alt="AI" width={180} height={50} />
           </div>
@@ -516,26 +462,17 @@ console.log(waitingLiveAgent)
               </div>
             </div>
           </div>
-
         </div>
         {/* language switch message end =================*/}
 
-
-
-
-
         {/* message conversation container =================*/}
-        <div
-          className={`${styles.messageContentWrapper} d-flex flex-column`}
-        >
-
-
-
-
+        <div className={`${styles.messageContentWrapper} d-flex flex-column`}>
           {/* user and api messages =================*/}
           {chatMessages.map((message, index) => {
-
-            if (message.type !== 'apiMessage' && message.type !== 'userMessage') {
+            if (
+              message.type !== 'apiMessage' &&
+              message.type !== 'userMessage'
+            ) {
               // skip rendering if the message type is not 'apiMessage' or 'userMessage'
               return null;
             }
@@ -546,7 +483,7 @@ console.log(waitingLiveAgent)
             let userStyles = 'justify-content-end flex-row-reverse float-end';
 
             if (message.type === 'apiMessage') {
-              if(imgLiveBot === 'bot'){
+              if (imgLiveBot === 'bot') {
                 icon = (
                   <Image
                     src="/chat-header.png"
@@ -557,7 +494,7 @@ console.log(waitingLiveAgent)
                     priority
                   />
                 );
-              }else{
+              } else {
                 icon = (
                   <Image
                     src={agentImage}
@@ -572,7 +509,6 @@ console.log(waitingLiveAgent)
               className = styles.apimessage;
               userStyles = 'justify-content-start flex-row float-start';
               wrapper = 'align-items-start justify-content-start';
-
             } else if (message.type === 'userMessage') {
               icon = (
                 <Image
@@ -591,14 +527,20 @@ console.log(waitingLiveAgent)
                   ? styles.usermessagewaiting
                   : styles.usermessage;
             } else {
-
             }
 
             // const isLastApiMessageWithNotSure =
             //   message.type === 'apiMessage' &&
             //   message.message.includes("Hmm, I'm not sure" || "හ්ම්, මට විශ්වාස නෑ." || "ஹ்ம்ம், எனக்கு உறுதியாக தெரியவில்லை") &&
             //   index === chatMessages.length - 1;
-            const notSureMessages = ["Hmm, I'm not sure", "I'm sorry", "There is no question", "أنا آسف", "هم، لست متأكدا", "من دون شك"];
+            const notSureMessages = [
+              "Hmm, I'm not sure",
+              "I'm sorry",
+              'There is no question',
+              'أنا آسف',
+              'هم، لست متأكدا',
+              'من دون شك',
+            ];
             const isLastApiMessageWithNotSure =
               message.type === 'apiMessage' &&
               notSureMessages.some((text) => message.message.includes(text)) &&
@@ -613,9 +555,7 @@ console.log(waitingLiveAgent)
                   <div
                     className={`${styles.botChatMsgContainer} ${userStyles} d-flex my-2`}
                   >
-                    <div className="d-flex">
-                      {icon}
-                    </div>
+                    <div className="d-flex">{icon}</div>
                     <div className={`${wrapper} d-flex flex-column ms-2`}>
                       <div
                         className={`${styles.botMessageContainer} ${userHomeStyles} d-flex flex-column my-1`}
@@ -631,48 +571,58 @@ console.log(waitingLiveAgent)
                         {isLastApiMessageWithNotSure && (
                           <button
                             className={`bg-dark rounded text-white py-2 px-3 my-3`}
-                            style={{ width: 'max-content', alignSelf: 'center' }}
-                            onClick={() => { SwitchToLiveAgent() }}
+                            style={{
+                              width: 'max-content',
+                              alignSelf: 'center',
+                            }}
+                            onClick={() => {
+                              SwitchToLiveAgent();
+                            }}
                           >
                             Connect with Live Agent
                           </button>
                         )}
                       </div>
-
                     </div>
                   </div>
                 </div>
-
               </>
             );
           })}
           {/* user and api messages end =================*/}
-          {
-            waitingLiveAgent && (
-              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
-                <p className='mb-0'>One of our Customer Support agents will be with you soon. Stay tuned!</p>
-              </div>
-            )
-          }
-          {
+          {waitingLiveAgent && (
+            <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+              <p className="mb-0">
+                One of our Customer Support agents will be with you soon. Stay
+                tuned!
+              </p>
+            </div>
+          )}
+          {/* {
           agentInfoMsg && (
             <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
               Now you are chatting with {agentName}
               <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           )
-        }
-          {
-            closeState && (
-              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
-                <p className='mb-0'>Thank you for contacting us.</p>
-              </div>
-            )
-          }
+        } */}
+          {showMessage && agentInfoMsg && (
+            <div
+              className="alert alert-info mx-3 text-center alert-dismissible fade show"
+              role="alert"
+            >
+              Now you are chatting with {agentName}
+            </div>
+          )}
+          {closeState && (
+            <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+              <p className="mb-0">Thank you for contacting us.</p>
+            </div>
+          )}
 
           {/* show rating =================*/}
           {showChatRating && (
-            <div className="d-flex flex-column" id='chatRating'>
+            <div className="d-flex flex-column" id="chatRating">
               <div className="d-flex">
                 <Image src="/chat-header.png" alt="AI" width="40" height="40" />
               </div>
@@ -688,7 +638,7 @@ console.log(waitingLiveAgent)
                         className={`${styles.botRatingContainer} d-flex flex-column my-1`}
                       >
                         <p className={`${styles.rateTitle} mb-0 text-dark`}>
-                        Did we help you?
+                          Did we help you?
                         </p>
                         <p className="text-dark mb-0">Add your rating</p>
                         <div className="star-rating">
@@ -712,7 +662,9 @@ console.log(waitingLiveAgent)
                             );
                           })}
                         </div>
-                        <p className={` mb-0 mt-3 text-dark`}>Your feedback :</p>
+                        <p className={` mb-0 mt-3 text-dark`}>
+                          Your feedback :
+                        </p>
                         <textarea
                           className={`${styles.textarea} p-2 rounded`}
                           rows={3}
@@ -733,27 +685,17 @@ console.log(waitingLiveAgent)
                 </div>
               </div>
             </div>
-          )
-          }
+          )}
           {/* show rating end =================*/}
 
-          {
-            closeRating && (
-              <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
-                <p className='mb-0'>Thank you for your feedback</p>
-              </div>
-            )
-          }
-
-
-
+          {closeRating && (
+            <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
+              <p className="mb-0">Thank you for your feedback</p>
+            </div>
+          )}
         </div>
       </div>
       {/* message conversation container end =================*/}
-
-
-
-
 
       {/* input fields =================*/}
       <div className={`${styles.inputContainer}`}>
@@ -767,16 +709,14 @@ console.log(waitingLiveAgent)
           id="userInput"
           name="userInput"
           placeholder={
-            loading
-              ? 'Waiting for response...'
-              : 'What is this question about?'
+            loading ? 'Waiting for response...' : 'What is this question about?'
           }
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className={styles.textarea}
         />
         <button
-          onClick={(liveAgent === false) ? handleSubmit : handleLiveAgent}
+          onClick={liveAgent === false ? handleSubmit : handleLiveAgent}
           disabled={loading}
           className={`${styles.inputIconContainer} `}
         >
@@ -797,7 +737,7 @@ console.log(waitingLiveAgent)
       )}
       {/* input fields end ================= */}
     </Layout>
-  )
-}
+  );
+};
 
-export default Chatbot
+export default Chatbot;

@@ -5,13 +5,9 @@ import styles from '@/styles/Home.module.css';
 import { Message } from '@/types/chat';
 import Image from 'next/image';
 import LoadingDots from '@/components/ui/LoadingDots';
-import {
-  AiOutlineSend
-} from 'react-icons/ai';
+import { AiOutlineSend } from 'react-icons/ai';
 import { Document } from 'langchain/document';
-import { AiOutlineClose } from "react-icons/ai";
-
-
+import { AiOutlineClose } from 'react-icons/ai';
 
 const LiveAgent = () => {
   const [query, setQuery] = useState<string>('');
@@ -54,8 +50,15 @@ const LiveAgent = () => {
   const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
   const [busyAgent, setBusyAgent] = useState(false);
   const [timerCount, setTimerCount] = useState(0);
+  const [showMessage, setShowMessage] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(false);
+    }, 10000);
 
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const now = Date.now();
@@ -64,59 +67,65 @@ const LiveAgent = () => {
   }, []);
   console.log('user id : ', id);
 
-
-
-
-
   useEffect(() => {
     // console.log("text there : ", checkNotSure)
-  }, [agentName, agentInfoMsg, agentImage, timerRunning, closeRating, busyAgent]);
-
+  }, [
+    agentName,
+    agentInfoMsg,
+    agentImage,
+    timerRunning,
+    closeRating,
+    busyAgent,
+  ]);
 
   const [closeState, setCloseState] = useState(false);
   const handleCloseChat = async () => {
-    setCloseState(true)
+    setCloseState(true);
 
-    const response = await fetch('https://solutions.it-marketing.website/chat-close-by-user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://solutions.it-marketing.website/chat-close-by-user',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chatId: id }),
       },
-      body: JSON.stringify({ chatId: id }),
-    });
+    );
 
     if (response.status !== 200) {
       const error = await response.json();
       throw new Error(error.message);
     }
     const data = await response.json();
-    console.log(data.success)
+    console.log(data.success);
 
     if (data.success === 'success') {
-      setShowChatRating(true)
+      setShowChatRating(true);
+    } else {
+      setShowChatRating(false);
     }
-    else {
-      setShowChatRating(false)
-    }
-  }
+  };
   let counter = 0;
   useEffect(() => {
-
     if (closeState === false) {
       let intervalId: any;
       if (timerRunning) {
         // counter ++;
         // console.log("counter",counter)
         // setTimerCount(counter)
-        console.log("dasd", id)
+        console.log('dasd', id);
         intervalId = setInterval(async () => {
-          const response = await fetch('https://solutions.it-marketing.website/live-chat-agent', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          const response = await fetch(
+            'https://solutions.it-marketing.website/live-chat-agent',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ chatId: id }),
             },
-            body: JSON.stringify({ chatId: id }),
-          });
+          );
 
           if (response.status !== 200) {
             const error = await response.json();
@@ -124,22 +133,23 @@ const LiveAgent = () => {
           }
           const data = await response.json();
 
-          console.log("is_time_out : ",data.is_time_out)
-          if ((data.chat_status === "closed") && (data.is_time_out !== "yes")) {
+          console.log('is_time_out : ', data.is_time_out);
+          if (data.chat_status === 'closed' && data.is_time_out !== 'yes') {
             setShowChatRating(true);
-          }
-          else {
+          } else {
             setShowChatRating(false);
             setAgentInfoMsg(false);
-            if (data.agent_id != "unassigned") {
+            if (data.agent_id != 'unassigned') {
               if (!data.profile_picture) {
-                setAgentImage("/chat-header.png");
-              }
-              else {
-                setAgentImage("https://solutions.it-marketing.website/uploads/" + data.profile_picture);
+                setAgentImage('/chat-header.png');
+              } else {
+                setAgentImage(
+                  'https://solutions.it-marketing.website/uploads/' +
+                    data.profile_picture,
+                );
               }
               setAgentName(data.agent_name);
-              setWaitingLiveAgent(false)
+              setWaitingLiveAgent(false);
               setAgentInfoMsg(true);
               if (data.agent_message != null) {
                 setMessageState((state) => ({
@@ -154,17 +164,18 @@ const LiveAgent = () => {
                   pending: undefined,
                 }));
               }
-            }
-            else {
-              
+            } else {
               if (counter > 5) {
-                const response = await fetch('https://solutions.it-marketing.website/chat-timeout', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
+                const response = await fetch(
+                  'https://solutions.it-marketing.website/chat-timeout',
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ chatId: id }),
                   },
-                  body: JSON.stringify({ chatId: id }),
-                });
+                );
 
                 if (response.status !== 200) {
                   const error = await response.json();
@@ -172,26 +183,21 @@ const LiveAgent = () => {
                 }
                 const data = await response.json();
                 setBusyAgent(true);
-                setWaitingLiveAgent(false)
-                console.log(data.success)
-                clearInterval(intervalId)
+                setWaitingLiveAgent(false);
+                console.log(data.success);
+                clearInterval(intervalId);
               }
               counter = counter + 1;
-              console.log("counter", counter)
+              console.log('counter', counter);
             }
           }
         }, 5000);
-
       }
 
       return () => clearInterval(intervalId);
+    } else {
+      console.log('chat closed');
     }
-    else {
-      console.log("chat closed")
-    }
-
-    
-
   }, [timerRunning, id, waitingLiveAgent]);
 
   useEffect(() => {
@@ -202,12 +208,6 @@ const LiveAgent = () => {
   useEffect(() => {
     textAreaRef.current?.focus();
   }, []);
-
-
-
-
-
-
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -222,8 +222,6 @@ const LiveAgent = () => {
     // get user message
     let question = query.trim();
     console.log('question from user : ', question);
-
-
 
     // set user message array
     setMessageState((state) => ({
@@ -242,50 +240,39 @@ const LiveAgent = () => {
     setQuery('');
     setMessageState((state) => ({ ...state, pending: '' }));
 
-
-
     // send user message
-    const response = await fetch('https://solutions.it-marketing.website/live-chat-user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://solutions.it-marketing.website/live-chat-user',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_Message: question,
+          chatId: id,
+          language: selectedLanguage,
+        }),
       },
-      body: JSON.stringify({
-        user_Message: question,
-        chatId: id,
-        language: selectedLanguage,
-      }),
-    });
+    );
 
     if (response.status !== 200) {
       const error = await response.json();
       throw new Error(error.message);
     }
     const data = await response.json();
-    setWaitingLiveAgent(true)
-    if (data.success === "Added") {
+    setWaitingLiveAgent(true);
+    if (data.success === 'Added') {
       setTimerRunning(true);
       setAlertMessage(data.success);
       setLoading(false);
       setShowAlert(true);
-    }
-    else {
+    } else {
       console.log('response : ', 'Insert Fail');
     }
 
-
-
     const ctrl = new AbortController();
   }
-
-
-
-
-
-
-
-
-
 
   async function sendRateValues() {
     try {
@@ -301,14 +288,12 @@ const LiveAgent = () => {
         }),
       });
       const ratingData = await response.json();
-      console.log("rating data : ", ratingData)
-      setCloseRating(true)
+      console.log('rating data : ', ratingData);
+      setCloseRating(true);
     } catch (error) {
       console.error(error);
     }
   }
-
-
 
   //prevent empty submissions
   const handleEnter = useCallback(
@@ -331,55 +316,44 @@ const LiveAgent = () => {
 
   console.log('messages : ', messages);
 
-
-
-
-
   //scroll to bottom of chat
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatMessages, closeRating, showChatRating, closeState, waitingLiveAgent, busyAgent, agentInfoMsg]);
-
-
-
-
-
-
-
-
-
-
-
-
+  }, [
+    chatMessages,
+    closeRating,
+    showChatRating,
+    closeState,
+    waitingLiveAgent,
+    busyAgent,
+    agentInfoMsg,
+  ]);
 
   return (
     <Layout>
       {/* chat top header */}
       <div className={`${styles.chatTopBar} d-flex flex-row`}>
         <div className="col-12 text-center d-flex flex-row justify-content-between px-2 px-lg-2">
-          <Image
-            src="/chat-top-bar.png"
-            alt="AI"
-            width={150}
-            height={30}
-          />
-          <button className='close-button' onClick={handleCloseChat} title="Close Chat"><AiOutlineClose /> </button>
+          <Image src="/chat-top-bar.png" alt="AI" width={150} height={30} />
+          <button
+            className="close-button"
+            onClick={handleCloseChat}
+            title="Close Chat"
+          >
+            <AiOutlineClose />{' '}
+          </button>
         </div>
       </div>
 
-      <div ref={messageListRef}  className={`${styles.messageWrapper}`}>
+      <div ref={messageListRef} className={`${styles.messageWrapper}`}>
         <div
           className={`${styles.botChatMsgContainer} d-flex flex-column my-2`}
         >
           <div className="d-flex">
-            <Image
-              src="/chat-header.png"
-              alt="AI"
-              width="40"
-              height="40"
-            /></div>
+            <Image src="/chat-header.png" alt="AI" width="40" height="40" />
+          </div>
           <div className={`d-flex flex-column py-3`}>
             <div
               className={`welcomeMessageContainer d-flex flex-column align-items-center align-items-lg-start  my-lg-1`}
@@ -390,50 +364,63 @@ const LiveAgent = () => {
                 width={250}
                 height={180}
               />
-              <p className="">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
-              <p className="">مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.</p>
+              <p className="">
+                Hello, Welcome to DFCC Bank. Please select the language to get
+                started.
+              </p>
+              <p className="">
+                مرحبًا بكم في DFCC Bank. يرجى تحديد اللغة للبدء.
+              </p>
 
               <div className="d-flex flex-row welcome-language-select w-100">
                 <div className="col-6 p-1">
-                  <button className=' px-3 py-2 rounded' onClick={() => {
-                    setSelectedLanguage('English');
-                    setMessageState((state) => ({
-                      ...state,
-                      messages: [
-                        ...state.messages,
-                        {
-                          type: 'apiMessage',
-                          message: 'Please ask your question in English.',
-                        },
-                      ],
-                      pending: undefined,
-                    }));
-                  }}>English</button>
+                  <button
+                    className=" px-3 py-2 rounded"
+                    onClick={() => {
+                      setSelectedLanguage('English');
+                      setMessageState((state) => ({
+                        ...state,
+                        messages: [
+                          ...state.messages,
+                          {
+                            type: 'apiMessage',
+                            message: 'Please ask your question in English.',
+                          },
+                        ],
+                        pending: undefined,
+                      }));
+                    }}
+                  >
+                    English
+                  </button>
                 </div>
                 <div className="col-6 p-1">
-                  <button className='px-2 py-2 rounded' onClick={() => {
-                    setSelectedLanguage('Arabic');
-                    setMessageState((state) => ({
-                      ...state,
-                      messages: [
-                        ...state.messages,
-                        {
-                          type: 'apiMessage',
-                          message: 'الرجاء طرح سؤالك باللغة الإنجليزية.',
-                        },
-                      ],
-                      pending: undefined,
-                    }));
-                  }}>Arabic</button>
+                  <button
+                    className="px-2 py-2 rounded"
+                    onClick={() => {
+                      setSelectedLanguage('Arabic');
+                      setMessageState((state) => ({
+                        ...state,
+                        messages: [
+                          ...state.messages,
+                          {
+                            type: 'apiMessage',
+                            message: 'الرجاء طرح سؤالك باللغة الإنجليزية.',
+                          },
+                        ],
+                        pending: undefined,
+                      }));
+                    }}
+                  >
+                    Arabic
+                  </button>
                 </div>
               </div>
             </div>
             {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
           </div>
         </div>
-        <div
-          className={`${styles.messageContentWrapper} d-flex flex-column`}
-        >
+        <div className={`${styles.messageContentWrapper} d-flex flex-column`}>
           {chatMessages.map((message, index) => {
             let icon;
             let className;
@@ -495,37 +482,44 @@ const LiveAgent = () => {
               </>
             );
           })}
-           {
-            busyAgent && (
-              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
-                <p className='mb-0'>Sorry, We are a bit busy this time of year but don’t worry. You can contact us via 077. Thank you for your understanding and talk to you soon.</p>
-              </div>
-            )
-          }
-          {
-            waitingLiveAgent && (
-              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
-                <p className='mb-0'>One of our Customer Support agents will be with you soon. Stay tuned!</p>
-              </div>
-            )
-          }
-          {
-          agentInfoMsg && (
-            <div className="alert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
-              Now you are chatting with {agentName}
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          {busyAgent && (
+            <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+              <p className="mb-0">
+                Sorry, We are a bit busy this time of year but don’t worry. You
+                can contact us via 077. Thank you for your understanding and
+                talk to you soon.
+              </p>
             </div>
-          )
-        }
-          {
-            closeState && (
-              <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
-                <p className='mb-0'>Thank you for contacting us. </p>
-              </div>
-            )
-          }
+          )}
+          {waitingLiveAgent && (
+            <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+              <p className="mb-0">
+                One of our Customer Support agents will be with you soon. Stay
+                tuned!
+              </p>
+            </div>
+          )}
+          {agentInfoMsg && (
+            <div
+              className="alert alert-info mx-3 text-center  alert-dismissible fade show"
+              role="alert"
+            >
+              Now you are chatting with {agentName}
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          )}
+          {closeState && (
+            <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
+              <p className="mb-0">Thank you for contacting us. </p>
+            </div>
+          )}
           {showChatRating && (
-            <div className="d-flex flex-column" id='chatRating'>
+            <div className="d-flex flex-column" id="chatRating">
               <div className="d-flex">
                 <Image src="/chat-header.png" alt="AI" width="40" height="40" />
               </div>
@@ -541,7 +535,7 @@ const LiveAgent = () => {
                         className={`${styles.botRatingContainer} d-flex flex-column my-1`}
                       >
                         <p className={`${styles.rateTitle} mb-0 text-dark`}>
-                        Did we help you?
+                          Did we help you?
                         </p>
                         <p className="text-dark mb-0">Add your rating</p>
                         <div className="star-rating">
@@ -565,7 +559,9 @@ const LiveAgent = () => {
                             );
                           })}
                         </div>
-                        <p className={` mb-0 mt-3 text-dark`}>Your feedback :</p>
+                        <p className={` mb-0 mt-3 text-dark`}>
+                          Your feedback :
+                        </p>
                         <textarea
                           className={`${styles.textarea} p-2 rounded`}
                           rows={3}
@@ -587,15 +583,12 @@ const LiveAgent = () => {
                 {/* <p className={`${styles.timeText} text-start  mt-2`}>{time}</p> */}
               </div>
             </div>
-          )
-          }
-          {
-            closeRating && (
-              <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
-                <p className='mb-0'>Thank you for your feedback</p>
-              </div>
-            )
-          }
+          )}
+          {closeRating && (
+            <div className="d-flex bg-chat-ratesuccess-msg text-center justify-content-center py-3">
+              <p className="mb-0">Thank you for your feedback</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -613,9 +606,7 @@ const LiveAgent = () => {
           id="userInput"
           name="userInput"
           placeholder={
-            loading
-              ? 'Waiting for response...'
-              : 'What is this question about?'
+            loading ? 'Waiting for response...' : 'What is this question about?'
           }
           value={query}
           onChange={(e) => setQuery(e.target.value)}
