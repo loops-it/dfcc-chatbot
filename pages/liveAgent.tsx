@@ -50,15 +50,6 @@ const LiveAgent = () => {
   const [waitingLiveAgent, setWaitingLiveAgent] = useState(false);
   const [busyAgent, setBusyAgent] = useState(false);
   const [timerCount, setTimerCount] = useState(0);
-  const [showMessage, setShowMessage] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMessage(false);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const now = Date.now();
@@ -499,20 +490,14 @@ const LiveAgent = () => {
               </p>
             </div>
           )}
-          {agentInfoMsg && (
-            <div
-              className="alert alert-info mx-3 text-center  alert-dismissible fade show"
-              role="alert"
-            >
-              Now you are chatting with {agentName}
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-              ></button>
+          {
+          agentInfoMsg && (
+            <div className="alert paddingalert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
+             <p className='mb-0 alertAgent' style={{fontSize: "9px !important"}}>Now you are chatting with {agentName}</p>
+              {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
             </div>
-          )}
+          )
+        }
           {closeState && (
             <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
               <p className="mb-0">Thank you for contacting us. </p>
