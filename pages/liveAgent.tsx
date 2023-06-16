@@ -490,14 +490,7 @@ const LiveAgent = () => {
               </p>
             </div>
           )}
-          {
-          agentInfoMsg && (
-            <div className="alert paddingalert alert-info mx-3 text-center  alert-dismissible fade show" role="alert">
-             <p className='mb-0 alertAgent' style={{fontSize: "9px !important"}}>Now you are chatting with {agentName}</p>
-              {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
-            </div>
-          )
-        }
+          
           {closeState && (
             <div className="d-flex bg-chat-close-msg text-center justify-content-center py-3">
               <p className="mb-0">Thank you for contacting us. </p>
@@ -574,6 +567,14 @@ const LiveAgent = () => {
               <p className="mb-0">Thank you for your feedback</p>
             </div>
           )}
+          {
+          agentInfoMsg && (
+            <div className="alert paddingalert alert-info mx-1 text-center  alert-dismissible fade show" role="alert">
+             <p className='mb-0 alertAgent' style={{fontSize: "9px !important"}}>Now you are chatting with {agentName}</p>
+              {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
+            </div>
+          )
+        }
         </div>
       </div>
 
